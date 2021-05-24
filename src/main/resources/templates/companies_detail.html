@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <title th:text="${company.name}"></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/tab.css}">
+    <link rel="stylesheet" th:href="@{/css/raiting.css}">
+    <script th:src="@{/scripts/tab.js}"></script>
+</head>
+<body>
+
+<header th:insert="header :: header"></header>
+
+<div>
+
+    <h1 style="text-align: center" th:text="${company.name}"></h1>
+
+    <div style="text-align: right;margin-right: 20%">
+
+        <a class="btn btn-success" th:href="@{/companies/detail/support(companyId=${company.id})}">Support company</a>
+
+        <h4>Company goal: <br>
+            <span th:text="${company.currentSum}"></span>
+            / <span th:text="${company.companyGoal}"></span></h4>
+
+<!--        ProgressBar-->
+
+        <progress id="progressbar" th:value="${company.currentSum}" th:max="${company.companyGoal}"></progress>
+
+        <h4>Expiration date:<span th:text="${company.expirationDate}"></span></h4>
+
+<!--        Raiting-->
+
+        <form th:action="@{/companies/detail/addRaiting(companyId=${companyId})}" method="post">
+
+            <div class="rating-area">
+                <input  type="submit" th:id="star-5" name="idChecked" value="5">
+                <label th:for="star-5" title="«5» mark"></label>
+                <input type="submit" th:id="star-4" name="idChecked" value="4">
+                <label th:for="star-4" title="«4» mark"></label>
+                <input type="submit" th:id="star-3" name="idChecked" value="3">
+                <label th:for="star-3" title="«3» mark"></label>
+                <input type="submit" th:id="star-2" name="idChecked" value="2">
+                <label th:for="star-2" title="«2» mark"></label>
+                <input type="submit" th:id="star-1" name="idChecked" value="1">
+                <label th:for="star-1" title="«1» mark"></label>
+            </div>
+        </form>
+
+        <h4 style="margin-right: 5%;" th:text="${raiting}"></h4>
+
+    </div>
+
+
+    <h2 th:text="${company.topic}"></h2>
+    <h4 th:text="${company.tags}"></h4>
+
+
+    <iframe width="746" height="418" th:src="${company.youtubeURL}" title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'Description')">Description</button>
+        <button class="tablinks" onclick="openCity(event, 'News')">News(<span th:text="${news.size}"></span>)</button>
+        <button class="tablinks" onclick="openCity(event, 'Comments')">Comments(<span th:text="${comments.size}"></span>)</button>
+    </div>
+
+    <div id="Description" class="tabcontent">
+        <h3 th:text="${company.description}"></h3>
+    </div>
+
+    <div id="News" class="tabcontent">
+        <div th:each="item : ${news}">
+            <h4 th:text="${item.title}"></h4>
+            <h6 th:text="${item.date}"></h6>
+            <p th:text="${item.text}"></p>
+            <hr>
+        </div>
+
+        <form th:if="${isOwner}"
+              method="post" th:action="@{/companies/detail/addNews(companyId=${companyId})}" th:object="${newNews}">
+
+            <input type="text" th:field="*{title}" value="title" placeholder="title" required>
+
+            <textarea name="body" cols="40" rows="10" class="form-control"
+                      placeholder="Write news" th:field="*{text}" required ></textarea>
+
+            <button type="submit" style="margin-top:10px;" class="btn btn-success">Add news</button>
+        </form>
+
+        <div th:unless="${isOwner}">
+            <form sec:authorize="hasAuthority('ADMIN')"
+                method="post" th:action="@{/companies/detail/addNews(companyId=${companyId})}" th:object="${newNews}">
+
+                <input type="text" th:field="*{title}" value="title" placeholder="title" required>
+
+                <textarea name="body" cols="40" rows="10" class="form-control"
+                          placeholder="Write news" th:field="*{text}" required ></textarea>
+
+                <button type="submit" style="margin-top:10px;" class="btn btn-success">Add news</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div id="Comments" class="tabcontent">
+
+        <div th:each="comment : ${comments}">
+            <h4 th:text="${comment.user.username}"></h4>
+            <h6 th:text="${comment.date}"></h6>
+            <p th:text="${comment.text}"></p>
+            <hr>
+        </div>
+
+        <div sec:authorize="isAnonymous()">
+            <h4><a th:href="@{/login}">Login</a> to write a comment</h4>
+        </div>
+
+        <form sec:authorize="isAuthenticated()"
+              method="post" th:action="@{/companies/detail/addComment(companyId=${companyId})}" th:object="${newComment}">
+
+            <textarea name="body" cols="40" rows="10" class="form-control"
+                      placeholder="Write a comment" th:field="*{text}" required="" id="id_body"></textarea>
+
+            <button type="submit" style="margin-top:10px;" class="btn btn-success">Add comment</button>
+        </form>
+    </div>
+
+
+    <div th:if="${isOwner}">
+        <a class="btn btn-success" th:href="@{/profile/create/bonus(companyId=${company.id})}">Create bonus</a>
+        <a class="btn btn-info" th:href="@{/profile/edit/company(companyId=${company.id})}">Edit company</a>
+        <a class="btn btn-danger" th:href="@{/profile/delete/company(companyId=${company.id})}">Delete company</a>
+    </div>
+
+    <div th:unless="${isOwner}">
+        <div sec:authorize="hasAuthority('ADMIN')">
+            <a class="btn btn-success" th:href="@{/profile/create/bonus(companyId=${company.id})}">Create bonus</a>
+            <a class="btn btn-info" th:href="@{/profile/edit/company(companyId=${company.id})}">Edit company</a>
+            <a class="btn btn-danger" th:href="@{/profile/delete/company(companyId=${company.id})}">Delete company</a>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>
+
+

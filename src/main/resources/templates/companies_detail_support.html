@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Support</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<header th:insert="header :: header"></header>
+
+<h1>Support <a th:href="@{/companies/detail(companyId=${company.id})}"
+               th:text="${company.name}" th:object="${donateSum}"></a></h1>
+
+<form style="margin-top: 50px;" method="post" th:action="@{/companies/detail/support/donate(companyId=${company.id})}">
+
+    <h4>Donate:</h4>
+    <div class="col-md-10">
+        <input type="number" th:name="donateSum"
+               oninput="if (this.value.length > this.maxLength) this.value
+             = this.value.slice(0, this.maxLength);"
+               maxlength = "9"
+               name="donateSum" class="form-control" placeholder="sum" step="0.01" required="" id="id_sum">
+        <button style="margin-top: 10px;" type="submit" name="confirm" class="btn btn-primary">Confirm</button>
+    </div>
+
+</form>
+
+<br>
+<br>
+<h4>Buy bonus:</h4>
+
+<div style="text-align: center;" th:if="${bonusCount} > 0">
+    <h4>BONUSES(<span th:text="${bonusCount}"></span>):</h4>
+    <table  style="width:400px;margin:0 auto;" class="table table-success">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <div th:each="bonus : ${bonuses}">
+            <tr>
+                <td th:text="${bonus.name}"></td>
+                <td th:text="${bonus.description}"></td>
+                <td th:text="${bonus.price}"></td>
+                <td>
+                    <a th:href="@{/companies/detail/support/buy(companyId=${companyId}, bonusId=${bonus.id})}"
+                       class="icon-link">
+                        Buy
+                        <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"></use></svg>
+                    </a>
+                </td>
+            </tr>
+        </div>
+        </tbody>
+    </table>
+</div>
+
+<div style="text-align: center;" th:unless="${bonusCount} > 0">
+    <h4>No bonuses</h4>
+</div>
+
+</body>
+</html>
+
+
+<!--th:name="companyId" th:value="${company.id}" th:id="companyId"-->

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<header th:insert="header :: header"></header>
+
+<h1>My profile data:</h1>
+
+<form method="post" th:object="${user}" th:action="@{/profile/data}">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputEmail4">Login</label>
+            <input type="text" class="form-control" id="inputEmail4" required
+                   th:field="*{username}" disabled th:value="${user.username}">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="inputPassword4">Password</label>
+            <input type="password" class="form-control" required id="inputPassword4" th:field="*{password}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputAddress">First name</label>
+        <input type="text" class="form-control" id="inputAddress" required
+               th:field="*{firstname}" th:value="${user.firstname}">
+    </div>
+
+    <div class="form-group">
+        <label for="inputAddress">Last name</label>
+        <input type="text" class="form-control" id="inputAddress" required
+               th:field="*{lastname}" th:value="${user.lastname}">
+    </div>
+
+    <div class="form-group">
+        <label for="inputAddress">Email</label>
+        <input type="email" class="form-control" id="inputAddress" required
+               th:field="*{email}" th:value="${user.email}">
+    </div>
+
+<!--    <img th:src="@{/img/${user.image}}">-->
+
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>
+
+</body>
+</html>

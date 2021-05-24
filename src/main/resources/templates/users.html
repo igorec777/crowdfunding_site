@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Users table</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/1f4a6fb31b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <script th:src="@{/scripts/select_all.js}"></script>
+</head>
+<body>
+
+<header th:insert="header :: header"></header>
+
+<div>
+
+    <h1 class="my-0 mr-md-auto font-weight-normal">Table of users(<span th:text="${count}"></span>)</h1>
+
+    <div th:if="${changesCount} != '' and ${changesCount} != -1">
+        <p style="color: red">Changes: <i th:text="${changesCount}"></i></p>
+    </div>
+
+    <a></a>
+
+    <form  class="ui form" method="post" th:action="@{/admin/users}">
+
+        <div class="btn-toolbar">
+            <button type="submit" class="btn btn-default" name="assign" >Change role</button>
+            <button type="submit" class="btn btn-default" name="block" >Block</button>
+            <button type="submit" class="btn btn-default" name="unblock"><i class="fas fa-unlock-alt"></i></button>
+            <button type="submit" class="btn btn-default" name="delete"><i class="fas fa-trash-alt"></i></button>
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="all" name="all" value="all" th:onclick="select_all(this)">
+                </th>
+                <th scope="col">Id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Firstname</th>
+                <th scope="col">Lastname</th>
+                <th scope="col">Email</th>
+                <th scope="col">Register Date</th>
+                <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <div th:each="user : ${users}">
+                <tr>
+                    <td>
+                        <input name="idChecked" th:value="${user.id}" th:id="idChecked" type="checkbox">
+                    </td>
+
+                    <td th:text="${user.id}"></td>
+                    <div th:if="${user.roles.size} > 1">
+                        <td th:text="${user.username}" style="color: red"></td>
+                    </div>
+                    <div th:if="${user.roles.size <= 1}">
+                        <td th:text="${user.username}"></td>
+                    </div>
+
+                    <td th:text="${user.firstname}"></td>
+                    <td th:text="${user.lastname}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.registerDate}"></td>
+                    <td th:text="${user.status}"></td>
+                </tr>
+            </div>
+
+            </tbody>
+        </table>
+
+    </form>
+
+</div>
+
+
+</body>
+</html>

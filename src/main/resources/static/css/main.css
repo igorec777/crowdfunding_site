@@ -1,0 +1,41 @@
+body
+{
+    margin: 0 auto;
+    /*background-image: url("/images/test2.jpg");*/
+    background-repeat:no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+
+h1
+{
+    color:darkred;
+    font-size: 200%;
+    font-family: Bradley Hand, cursive;
+    text-align: center;
+    text-shadow: 0px 0px 6px rgba(0, 0, 255, 0.5);
+}
+
+h4
+{
+    font-family: serif, monospace;
+}
+
+label
+{
+    color:#3ac421;
+    font-weight:600;
+}
+
+tr
+{
+    background-color: #268d63;
+}
+
+img
+{
+    height: 100px;
+    width: 150px;
+    border-radius: 50px 50px 50px 50px;
+    box-shadow: 0px 0px 30px 10px #5c2fc0;
+}

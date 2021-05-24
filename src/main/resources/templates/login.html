@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport">
+    <title lang="en">Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+
+<header th:insert="header :: header"></header>
+
+<article>
+
+    <h1>Log in to account</h1>
+
+    <div th:if="${param.error}" style="color: red">
+        <p>Can't login</p>
+    </div>
+        <form th:action="@{/login}"  method="post">
+
+            <div class="form-group">
+                <label>Login</label>
+                <input name="username" class="form-control" type="text" required placeholder="Enter login">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input name="password" class="form-control" type="password" required placeholder="Password">
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Login">
+        </form>
+</article>
+
+</body>
+
+</html>

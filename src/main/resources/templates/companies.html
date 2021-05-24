@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Companies</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+
+</head>
+<body>
+
+
+<header th:insert="header :: header"></header>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Art')}">Art </a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Comics')}">Comics</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Crafts')}">Crafts</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Dance')}">Dance</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Design')}">Design</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Fashion')}">Fashion</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Film &amp; Video')}">Film &amp; Video</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Food')}">Food</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Games')}">Games</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Journalism')}">Journalism</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Music')}">Music</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Photography')}">Photography</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Publishing')}">Publishing</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Technology')}">Technology</a>
+            <a class="nav-item nav-link active" th:href="@{/companies(topic='Theater')}">Theater</a>
+        </div>
+    </div>
+</nav>
+
+<h1>Companies(<span th:text="${count}"></span>)</h1>
+
+<div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+
+    <div th:each="company : ${companies}">
+
+        <div  class="feature col">
+            <div class="feature-icon bg-primary bg-gradient">
+                <svg class="bi" width="1em" height="1em"><use xlink:href="#people-circle"></use></svg>
+            </div>
+            <h2>
+                <a th:href="@{/companies/detail(companyId=${company.id})}" th:text="${company.name}"></a>
+            </h2>
+            <p th:text="${company.description}"></p>
+
+        </div>
+    </div>
+</div>
+
+<a class="btn btn-success" href="/profile/create/company">Create company</a>
+
+</body>
+</html>

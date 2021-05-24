@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport">
+    <title lang="en">Register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+
+<header th:insert="header :: header"></header>
+
+<article>
+
+    <h1>Register new account</h1>
+
+    <div th:switch="${isDuplicate}">
+        <p th:case="'1'" style="color: red">This login is already exists</p>
+    </div>
+
+
+    <form th:action="@{/process_register}"  method="post" enctype="multipart/form-data">
+
+
+        <div class="form-group">
+            <label>Login</label>
+            <input name="username"  class="form-control" type="text" required placeholder="Enter login">
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input name="password"  class="form-control" type="password" required placeholder="Password">
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input name="email"   class="form-control" type="email" required placeholder="Email">
+        </div>
+
+        <div class="form-group">
+            <label>First name</label>
+            <input name="firstname"   class="form-control" type="text" required placeholder="First name">
+        </div>
+
+        <div class="form-group">
+            <label>Last name</label>
+            <input name="lastname"   class="form-control" type="text" required placeholder="Last name">
+        </div>
+
+<!--        <div class="custom-file mb-4">-->
+<!--            <input type="file" name="file" class="custom-file-input"-->
+<!--                   id="customFile"> <label class="custom-file-label"-->
+<!--                                           for="customFile">Image</label>-->
+<!--        </div>-->
+
+        <input type="submit" class="btn btn-primary" value="Register">
+    </form>
+</article>
+
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title lang="en">Bonuses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<header th:insert="header :: header"></header>
+
+<h1>You have <span th:text="${bonusCount}"></span> bonuses:</h1>
+
+<div style="text-align: center;" th:if="${bonusCount} > 0">
+
+    <table  style="width:400px;margin:0 auto;" class="table table-success">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Company</th>
+        </tr>
+        </thead>
+        <tbody>
+        <div th:each="bonus : ${bonuses}">
+            <tr>
+                <td th:text="${bonus.name}"></td>
+                <td th:text="${bonus.description}"></td>
+                <td th:text="${bonus.price}"></td>
+                <td>
+                    <a th:href="@{/companies/detail(companyId=${bonus.company.id})}" th:text="${bonus.company.name}"></a>
+                </td>
+            </tr>
+        </div>
+        </tbody>
+    </table>
+</div>
+
+<div style="text-align: center" th:unless="${bonusCount}">
+    <h2>
+        <pre>You have no bonuses
+      Go to <a href="/companies">companies</a> and support anyone
+    </pre>
+    </h2>
+</div>
+
+</body>
+</html>

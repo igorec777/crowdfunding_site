@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<!--  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+  <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css'>
+  <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <title></title>
+</head>
+
+<body>
+
+<header class="p-3 bg-dark text-white">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+      <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+
+        <li><a href="/companies" class="nav-link px-2 text-white">Companies</a></li>
+        <li><a href="/about" class="nav-link px-2 text-white">About</a></li>
+        <li sec:authorize="isAnonymous()"><a href="/login" class="nav-link px-2 text-white">Login</a></li>
+        <li sec:authorize="isAnonymous()"><a href="/register" class="nav-link px-2 text-white">Register</a></li>
+        <li sec:authorize="isAuthenticated()">
+          <a class="nav-link px-2 text-white" href="/logout">Logout</a>
+        </li>
+
+        <li>
+          <select sec:authorize="isAuthenticated()" style="margin-left: 1100px;" onchange="window.location.href = this.options[this.selectedIndex].value">
+            <option disabled selected ><span sec:authentication="name"></span></option>
+            <option value="/profile/data">Personal data</option>
+            <option value="/profile/companies">My companies</option>
+            <option value="/profile/bonuses">My bonuses</option>
+          </select>
+
+        </li>
+
+      </ul>
+
+    </div>
+  </div>
+
+  <div sec:authorize="hasAuthority('ADMIN')">
+    <div style="display:inline-block;" >
+      <button type="button" class="btn btn-outline-primary" onclick="location.href='/admin/users'">Users table</button>
+    </div>
+  </div>
+
+</header>
+
+</body>
+</html>
