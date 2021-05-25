@@ -24,9 +24,6 @@ public class RaitingService
 
         raitingList.removeIf(raiting -> !raiting.getUser_id().equals(id));
 
-        if (raitingList.size() == 0)
-            return false;
-        else
-            return true;
+        return raitingList.size() != 0;
     }
 }

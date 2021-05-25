@@ -1,20 +1,11 @@
 package com.example.course.helpers;
 
-import com.example.course.models.Role;
 import com.example.course.models.User;
-import com.example.course.repository.RoleRepository;
-import com.example.course.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.transaction.Transactional;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
-import java.util.List;
+
 
 public class RegisterHelper
 {

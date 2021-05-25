@@ -1,18 +1,16 @@
 package com.example.course.models;
 
-import com.example.course.helpers.DonateHelper;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.SortableField;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
 
 @Entity
 @Table(name = "companies")
+@Indexed
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,15 +20,20 @@ public class Company
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Field(name = "name")
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
+    @Field(name = "topic")
+    @SortableField
     @Column(nullable = false, length = 80)
     private String topic;
 
+    @Field(name = "description")
     @Column(nullable = false, length = 3000)
     private String description;
 
+    @Field(name = "tags")
     @Column(length = 200)
     private String tags;
 

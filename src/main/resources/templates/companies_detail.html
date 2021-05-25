@@ -27,8 +27,6 @@
             <span th:text="${company.currentSum}"></span>
             / <span th:text="${company.companyGoal}"></span></h4>
 
-<!--        ProgressBar-->
-
         <progress id="progressbar" th:value="${company.currentSum}" th:max="${company.companyGoal}"></progress>
 
         <h4>Expiration date:<span th:text="${company.expirationDate}"></span></h4>

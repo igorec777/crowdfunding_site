@@ -1,9 +1,8 @@
 package com.example.course.models;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-
 import javax.persistence.*;
+
 
 @Entity
 @Table(name = "raiting")

@@ -5,6 +5,7 @@
     <title>Companies</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/search.css}">
 
 </head>
 <body>
@@ -35,6 +36,23 @@
 </nav>
 
 <h1>Companies(<span th:text="${count}"></span>)</h1>
+
+<form th:action="@{/companies/search}" name="form">
+
+    <div class="container h-100">
+        <div class="d-flex justify-content-center h-100">
+            <div class="searchbar">
+                <input class="search_input" type="text" name="searchText" autocomplete="off" placeholder="Search...">
+                <a href="/companies/search" class="search_icon" onclick="this.closest('form').submit();return false;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</form>
 
 <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
 

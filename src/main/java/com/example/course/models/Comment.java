@@ -1,9 +1,8 @@
 package com.example.course.models;
 
 import lombok.Data;
-
 import javax.persistence.*;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "comments")

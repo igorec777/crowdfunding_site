@@ -1,9 +1,7 @@
 package com.example.course.models;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;

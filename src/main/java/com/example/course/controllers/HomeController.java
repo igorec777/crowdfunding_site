@@ -4,6 +4,8 @@ import com.example.course.helpers.DonateHelper;
 import com.example.course.helpers.RegisterHelper;
 import com.example.course.models.*;
 import com.example.course.service.*;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -36,6 +38,12 @@ public class HomeController
     @Autowired
     private RaitingService raitingService;
 
+    @Autowired
+    private SearchService searchService;
+
+    @Autowired
+    private IndexingService indexingService;
+
     @GetMapping("/")
     public String home()
     {
@@ -57,6 +65,27 @@ public class HomeController
             companies = companyService.findAll();
         else
             companies = companyService.findByTopic(topic);
+
+        model.addAttribute("count", companies.size());
+        model.addAttribute("companies", companies);
+
+        return "companies";
+    }
+
+    @GetMapping("/companies/search")
+    public String searchCompanies(@RequestParam(value = "searchText", required = false) String searchText,
+                                  Model model) throws InterruptedException
+    {
+        List<Company> companies;
+
+        if (searchText.equals(""))
+            companies = companyService.findAll();
+
+        else
+        {
+            indexingService.initiateIndexing();
+            companies = searchService.getCompanyBasedOnWord(searchText);
+        }
 
         model.addAttribute("count", companies.size());
         model.addAttribute("companies", companies);
@@ -140,14 +169,9 @@ public class HomeController
 
             companyService.save(company);
 
-            rattrs.addAttribute("companyId", companyId);
-            return "redirect:/companies/detail";
         }
-        else
-        {
-            rattrs.addAttribute("companyId", companyId);
-            return "redirect:/companies/detail";
-        }
+        rattrs.addAttribute("companyId", companyId);
+        return "redirect:/companies/detail";
     }
 
     @PreAuthorize("isAuthenticated()")
