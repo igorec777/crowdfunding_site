@@ -1,122 +1,99 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <title>Edit company</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="/static/app/content/bootstrap.min.69bb491202d2.css">
-  <link rel="stylesheet" type="text/css" href="/static/app/content/bootstrap-social.3a8403020d3d.css">
-  <link rel="stylesheet" type="text/css" href="/static/app/content/site.eac99ef4e7cc.css">
-  <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
-  <link rel="stylesheet" th:href="@{/css/main.css}">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Edit company</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+  </head>
 
-<header th:insert="header :: header"></header>
+  <body>
+    <header th:insert="header :: nav"></header>
+    <div class="container">
+      <h1>Edit company:</h1>
+      <form th:action="@{/profile/edit/company(companyId=${company.id})}" th:object="${company}" method="post">
+        <hr>
+        <div class="form-group row">
+          <label for="id_name" class="col-md-2 control-label">Company name</label>
+          <div class="col-md-10">
+            <input type="text" th:field="*{name}" th:value="${company.name}" disabled
+                   name="name" class="form-control" placeholder="Name" maxlength="200" required="" id="id_name">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="id_category" class="col-md-2 control-label">Topic</label>
+          <div class="col-md-10">
+            <select name="topic" th:field="*{topic}" th:value="${company.topic}"
+                    class="form-control" placeholder="Category" required="" id="id_category">
+              <option value="" selected="">---------</option>
+              <option value="Art">Art</option>
+              <option value="Comics">Comics</option>
+              <option value="Crafts">Crafts</option>
+              <option value="Dance">Dance</option>
+              <option value="Design">Design</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Film &amp; Video">Film &amp; Video</option>
+              <option value="Food">Food</option>
+              <option value="Games">Games</option>
+              <option value="Journalism">Journalism</option>
+              <option value="Music">Music</option>
+              <option value="Photography">Photography</option>
+              <option value="Publishing">Publishing</option>
+              <option value="Technology">Technology</option>
+              <option value="Theater">Theater</option>
+            </select>
+          </div>
+        </div>
 
-<h1>Edit company:</h1>
+        <div class="form-group row">
+          <label for="id_tags" class="col-md-2 control-label">Tags</label>
+          <div class="col-md-10">
+            <input type="text" th:field="*{tags}" th:value="${company.tags}"
+                   name="tags" class="form-control" placeholder="Tags" required="" id="id_tags">
+          </div>
+        </div>
 
-<form th:action="@{/profile/edit/company(companyId=${company.id})}" th:object="${company}" method="post" class="form-horizontal">
-  <hr>
+        <div class="form-group row">
+          <label for="description" class="col-md-2 control-label">Description</label>
+          <div class="col-md-10">
+            <textarea th:field="*{description}" th:value="${company.description}" autocomplete="on" id="description" name="description" class="form-control"></textarea>
+          </div>
+        </div>
 
-  <div class="form-group">
-    <label for="id_name" class="col-md-2 control-label">Company name</label>
-    <div class="col-md-10">
-      <input type="text" th:field="*{name}" th:value="${company.name}" disabled
-             name="name" class="form-control" placeholder="Name" maxlength="200" required="" id="id_name">
+        <div class="form-group row">
+          <label for="id_video" class="col-md-2 control-label">Youtube video URL</label>
+          <div class="col-md-10">
+            <input type="url" name="youtubeURL" th:field="*{youtubeURL}" th:value="${company.youtubeURL}"
+                   class="form-control" autocomplete="on" placeholder="YT video URL" maxlength="200" id="id_video">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="id_goal" class="col-md-2 control-label">Company goal (US$)</label>
+          <div class="col-md-10">
+            <input type="number" min="0.01" th:field="*{companyGoal}" th:value="${company.companyGoal}"
+                   name="companyGoal" class="form-control" placeholder="goal" step="0.01" required="" id="id_goal">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="id_expiration_date" class="col-md-2 control-label">Company expiration date</label>
+          <div class="col-md-10">
+            <input type="date" th:field="*{expirationDate}" th:value="${company.expirationDate}"
+                   name="expirationDate" class="form-control" required="" id="id_expiration_date">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-md-10">
+            <input type="hidden" name="next" value="/">
+            <input type="submit" value="Save changes" class="btn btn-success">
+          </div>
+        </div>
+      </form>
     </div>
-
-    <div style="margin-top: 20px;" class="form-group">
-      <label for="id_category" class="col-md-2 control-label">Topic</label>
-      <div class="col-md-10">
-        <select name="topic" th:field="*{topic}" th:value="${company.topic}"
-                class="form-control" placeholder="Category" required="" id="id_category">
-          <option value="" selected="">---------</option>
-
-          <option value="Art">Art</option>
-
-          <option value="Comics">Comics</option>
-
-          <option value="Crafts">Crafts</option>
-
-          <option value="Dance">Dance</option>
-
-          <option value="Design">Design</option>
-
-          <option value="Fashion">Fashion</option>
-
-          <option value="Film &amp; Video">Film &amp; Video</option>
-
-          <option value="Food">Food</option>
-
-          <option value="Games">Games</option>
-
-          <option value="Journalism">Journalism</option>
-
-          <option value="Music">Music</option>
-
-          <option value="Photography">Photography</option>
-
-          <option value="Publishing">Publishing</option>
-
-          <option value="Technology">Technology</option>
-
-          <option value="Theater">Theater</option>
-
-        </select>
-      </div>
-    </div>
-
-  </div>
-  <div class="form-group">
-    <label for="id_tags" class="col-md-2 control-label">Tags</label>
-    <div class="col-md-10">
-      <input type="text" th:field="*{tags}" th:value="${company.tags}"
-             name="tags" class="form-control" placeholder="Tags" required="" id="id_tags">
-    </div>
-  </div>
-
-  <!--  MARKDOWN-->
-  <p>Description</p>
-  <label for="description"></label>
-
-  <textarea th:field="*{description}" th:value="${company.description}"
-            autocomplete="on" id="description" name="description"
-            rows="3" cols="33">
-    </textarea>
-
-  <div class="form-group">
-    <label for="id_video" class="col-md-2 control-label">Youtube video URL</label>
-    <div class="col-md-10">
-      <input type="url" name="youtubeURL" th:field="*{youtubeURL}" th:value="${company.youtubeURL}"
-             class="form-control" autocomplete="on" placeholder="YT video URL" maxlength="200" id="id_video">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="id_goal" class="col-md-2 control-label">Company goal (US$)</label>
-    <div class="col-md-10">
-      <input type="number" th:field="*{companyGoal}" th:value="${company.companyGoal}"
-             name="companyGoal" class="form-control" placeholder="goal" step="0.01" required="" id="id_goal">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="id_expiration_date" class="col-md-2 control-label">Company expiration date</label>
-    <div class="col-md-10">
-      <input type="date" th:field="*{expirationDate}" th:value="${company.expirationDate}"
-             name="expirationDate" class="form-control" required="" id="id_expiration_date">
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
-      <input type="hidden" name="next" value="/">
-      <input type="submit" value="Save changes" class="btn btn-success">
-    </div>
-  </div>
-
-</form>
-
-</body>
+  </body>
 </html>

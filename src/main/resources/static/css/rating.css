@@ -1,7 +1,6 @@
 .rating-area {
     overflow: hidden;
-    width: 265px;
-    margin-left: 80%;
+    width: 243px;
 }
 .rating-area:not(:checked) > input {
     display: none;
