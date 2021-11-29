@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.*;
 
+import static com.example.course.helpers.RegisterHelper.getCurrentDateTime;
+
 
 @Controller
 public class AuthController
@@ -69,7 +71,7 @@ public class AuthController
 
             user.setRoles(roles);
 
-            user.setRegisterDate(RegisterHelper.getCurrentDateTime());
+            user.setRegisterDate(getCurrentDateTime());
             user.setStatus(1);
 
             userService.save(user);

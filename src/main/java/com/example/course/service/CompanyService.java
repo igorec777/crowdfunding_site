@@ -26,6 +26,10 @@ public class CompanyService
         return companies;
     }
 
+    public boolean isExistByCompanyName(String name) {
+        return companyRepository.existsByName(name);
+    }
+
     public List<Company> findByTopic(String topic)
     {
         List<Company> companies = findAll();

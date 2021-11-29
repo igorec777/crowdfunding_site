@@ -8,18 +8,27 @@ import com.example.course.service.BonusService;
 import com.example.course.service.CompanyService;
 import com.example.course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.security.Principal;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.course.helpers.UrlHelper.*;
+
 
 @Controller
-public class ProfileController
-{
+public class ProfileController {
     @Autowired
     private CompanyService companyService;
 
@@ -30,16 +39,14 @@ public class ProfileController
     private BonusService bonusService;
 
     @GetMapping("/profile/data")
-    public String getProfile(Model model, Principal principal)
-    {
+    public String getProfile(Model model, Principal principal) {
         model.addAttribute("user", userService.findByUsername(principal.getName()));
 
         return "profile_data";
     }
 
     @PostMapping("/profile/data")
-    public String changeProfile(@ModelAttribute User changedUser, Principal principal)
-    {
+    public String changeProfile(@ModelAttribute User changedUser, Principal principal) {
         RegisterHelper registerHelper = new RegisterHelper();
 
         User user = userService.findByUsername(principal.getName());
@@ -57,8 +64,7 @@ public class ProfileController
 
 
     @GetMapping("/profile/companies")
-    public String getCompanies(Principal principal, Model model)
-    {
+    public String getCompanies(Principal principal, Model model) {
         User user = userService.findByUsername(principal.getName());
         List<Company> companies;
 
@@ -74,30 +80,36 @@ public class ProfileController
     }
 
     @GetMapping("/profile/create/company")
-    public String newCompanyForm(Model model)
-    {
+    public String newCompanyForm(@ModelAttribute("isUnique") String isUnique,
+                                 @ModelAttribute("isDateWrong") String isDateWrong, Model model) {
         model.addAttribute("company", new Company());
-
         return "profile_create_company";
     }
 
     @PostMapping("/profile/create/company")
-    public String createCompany(@ModelAttribute Company company, Principal principal)
-    {
-        User user = userService.findByUsername(principal.getName());
+    public String createCompany(@ModelAttribute Company company, Principal principal, RedirectAttributes attrs) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime localDateTime = LocalDate.parse(company.getExpirationDate(), formatter).atStartOfDay();
 
-        company.setUser(user);
-
-        company.setCurrentSum(0.0f);
-
-        companyService.save(company);
-
+        if (Timestamp.valueOf(localDateTime).before(Timestamp.from(Instant.now()))) {
+            attrs.addAttribute("isDateWrong", "1");
+            return "redirect:/profile/create/company";
+        }
+        if (companyService.isExistByCompanyName(company.getName())) {
+            attrs.addAttribute("isUnique", "0");
+            return "redirect:/profile/create/company/";
+        } else {
+            User user = userService.findByUsername(principal.getName());
+            company.setUser(user);
+            company.setCurrentSum(0.0f);
+            company.setYoutubeURL(buildEmbedUrl(company.getYoutubeURL()));
+            companyService.save(company);
+        }
         return "redirect:/companies";
     }
 
     @GetMapping("/profile/bonuses")
-    public String getBonuses(Model model, Principal principal)
-    {
+    public String getBonuses(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
         Set<Bonus> bonuses = bonusService.findByUser(user);
 
@@ -108,8 +120,7 @@ public class ProfileController
     }
 
     @GetMapping("profile/create/bonus")
-    public String newBonusForm(@ModelAttribute("companyId") Long companyId, Model model, Principal principal)
-    {
+    public String newBonusForm(@ModelAttribute("companyId") Long companyId, Model model, Principal principal) {
         model.addAttribute("bonus", new Bonus());
         model.addAttribute("companyId", companyId);
 
@@ -118,12 +129,9 @@ public class ProfileController
 
     @PostMapping("profile/create/bonus")
     public String createBonus(@ModelAttribute Bonus bonus, @ModelAttribute("companyId") Long companyId,
-                              RedirectAttributes rattrs)
-    {
+                              RedirectAttributes rattrs) {
         Company company = companyService.findById(companyId);
-
         bonus.setCompany(company);
-
         bonusService.save(bonus);
 
         rattrs.addAttribute("companyId", companyId);
@@ -132,8 +140,7 @@ public class ProfileController
     }
 
     @GetMapping("profile/edit/company")
-    public String editCompanyForm(@ModelAttribute("companyId") Long companyId, Model model)
-    {
+    public String editCompanyForm(@ModelAttribute("companyId") Long companyId, Model model) {
         Company company = companyService.findById(companyId);
 
         model.addAttribute("companyId", companyId);
@@ -144,8 +151,7 @@ public class ProfileController
 
     @PostMapping("profile/edit/company")
     public String changeCompany(@ModelAttribute Company company, @ModelAttribute("companyId") Long companyId,
-                                RedirectAttributes rattrs)
-    {
+                                RedirectAttributes rattrs) {
         Company changedCompany = companyService.findById(companyId);
 
         changedCompany.setTopic(company.getTopic());
@@ -162,24 +168,21 @@ public class ProfileController
     }
 
     @GetMapping("profile/delete/company")
-    public String deleteCompany(@ModelAttribute("companyId") Long companyId, Model model)
-    {
+    public String deleteCompany(@ModelAttribute("companyId") Long companyId, Model model) {
         model.addAttribute("companyId", companyId);
 
         return "profile_delete_company_confirm";
     }
 
     @RequestMapping(value = "/profile/delete/company/confirm", method = RequestMethod.POST, params = "cancel")
-    public String cancelDeleteCompany(@ModelAttribute("companyId") Long companyId, Model model)
-    {
+    public String cancelDeleteCompany(@ModelAttribute("companyId") Long companyId, Model model) {
         model.addAttribute("companyId", companyId);
 
         return "redirect:/companies/detail?companyId=" + companyId;
     }
 
     @RequestMapping(value = "/profile/delete/company/confirm", method = RequestMethod.POST, params = "confirm")
-    public String confirmDeleteCompany(@ModelAttribute("companyId") Long companyId)
-    {
+    public String confirmDeleteCompany(@ModelAttribute("companyId") Long companyId) {
         companyService.deleteById(companyId);
 
         return "redirect:/companies";

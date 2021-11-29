@@ -18,12 +18,12 @@ public class RaitingService
         raitingRepository.save(raiting);
     }
 
-    public boolean isExistByUserId(Long id)
-    {
-        List<Raiting> raitingList = raitingRepository.findAll();
-
-        raitingList.removeIf(raiting -> !raiting.getUser_id().equals(id));
-
-        return raitingList.size() != 0;
+    public boolean isExistByCompanyIdAndUserId(Long companyId, Long userId) {
+        return raitingRepository.existsByCompanyIdAndUserId(companyId, userId);
     }
+
+    public Raiting findByCompanyIdAndUserId(Long companyId, Long userId) {
+        return raitingRepository.findRaitingByCompanyIdAndUserId(companyId, userId);
+    }
+
 }

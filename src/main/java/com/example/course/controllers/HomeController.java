@@ -16,10 +16,11 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.course.helpers.RegisterHelper.getCurrentDateTime;
+
 
 @Controller
-public class HomeController
-{
+public class HomeController {
     @Autowired
     private UserService userService;
 
@@ -45,20 +46,17 @@ public class HomeController
     private IndexingService indexingService;
 
     @GetMapping("/")
-    public String home()
-    {
+    public String home() {
         return "redirect:/companies";
     }
 
     @GetMapping("/about")
-    public String about()
-    {
+    public String about() {
         return "about";
     }
 
     @GetMapping("/companies")
-    public String getCompanies(@ModelAttribute("topic") String topic, Model model)
-    {
+    public String getCompanies(@ModelAttribute("topic") String topic, Model model) {
         List<Company> companies;
 
         if (topic.equals(""))
@@ -74,15 +72,13 @@ public class HomeController
 
     @GetMapping("/companies/search")
     public String searchCompanies(@RequestParam(value = "searchText", required = false) String searchText,
-                                  Model model) throws InterruptedException
-    {
+                                  Model model) throws InterruptedException {
         List<Company> companies;
 
         if (searchText.equals(""))
             companies = companyService.findAll();
 
-        else
-        {
+        else {
             indexingService.initiateIndexing();
             companies = searchService.getCompanyBasedOnWord(searchText);
         }
@@ -95,8 +91,7 @@ public class HomeController
 
     @GetMapping("/companies/detail")
     public String companyDetail(@ModelAttribute("companyId") Long companyId,
-                                Principal principal, Model model)
-    {
+                                Principal principal, Model model) {
         Long userId;
         List<Comment> comments = commentService.findByCompanyId(companyId);
         List<News> news = newsService.findByCompanyId(companyId);
@@ -116,7 +111,7 @@ public class HomeController
         boolean isOwner = company.getUser().getId().equals(userId);
 
         if (company.getRateCount() > 0)
-            raiting = DonateHelper.round((float)company.getTotalRate() / company.getRateCount(), 2);
+            raiting = DonateHelper.round((float) company.getTotalRate() / company.getRateCount(), 2);
         else
             raiting = 0;
 
@@ -134,14 +129,13 @@ public class HomeController
     @PreAuthorize("isAuthenticated()")
     @PostMapping("companies/detail/addComment")
     public String companyAddComment(@ModelAttribute("companyId") Long companyId, @ModelAttribute Comment comment,
-                                        Principal principal, RedirectAttributes rattrs)
-    {
+                                    Principal principal, RedirectAttributes rattrs) {
         Company company = companyService.findById(companyId);
         User user = userService.findByUsername(principal.getName());
 
         comment.setCompany(company);
         comment.setUser(user);
-        comment.setDate(RegisterHelper.getCurrentDateTime());
+        comment.setDate(getCurrentDateTime());
 
         commentService.save(comment);
         rattrs.addAttribute("companyId", companyId);
@@ -153,23 +147,25 @@ public class HomeController
     @RequestMapping(value = "companies/detail/addRaiting", method = RequestMethod.POST)
     public String companyAddRaiting(@ModelAttribute("companyId") Long companyId,
                                     @RequestParam(value = "idChecked", required = false) String rateValue,
-                                    Principal principal, RedirectAttributes rattrs)
-    {
+                                    Principal principal, RedirectAttributes rattrs) {
         Company company = companyService.findById(companyId);
-        User user = userService.findByUsername(principal.getName());
+        User currUser = userService.findByUsername(principal.getName());
+        Raiting raiting;
 
-        if (!raitingService.isExistByUserId(user.getId()))
-        {
-            Raiting raiting = new Raiting(Integer.parseInt(rateValue), company, user.getId());
-
-            raitingService.save(raiting);
-
+        if (!raitingService.isExistByCompanyIdAndUserId(companyId, currUser.getId())) {
+            raiting = new Raiting(Integer.parseInt(rateValue), company, currUser);
             company.setTotalRate(company.getTotalRate() + Integer.parseInt(rateValue));
             company.setRateCount(company.getRateCount() + 1);
-
-            companyService.save(company);
-
         }
+        else {
+            raiting = raitingService.findByCompanyIdAndUserId(companyId, currUser.getId());
+            company.setTotalRate(company.getTotalRate() - raiting.getValue() + Integer.parseInt(rateValue));
+            raiting.setValue(Integer.parseInt(rateValue));
+        }
+
+        raitingService.save(raiting);
+        companyService.save(company);
+
         rattrs.addAttribute("companyId", companyId);
         return "redirect:/companies/detail";
     }
@@ -177,12 +173,11 @@ public class HomeController
     @PreAuthorize("isAuthenticated()")
     @PostMapping("companies/detail/addNews")
     public String companyAddNews(@ModelAttribute("companyId") Long companyId, @ModelAttribute News news,
-                                 RedirectAttributes rattrs)
-    {
+                                 RedirectAttributes rattrs) {
         Company company = companyService.findById(companyId);
 
         news.setCompany(company);
-        news.setDate(RegisterHelper.getCurrentDateTime());
+        news.setDate(getCurrentDateTime());
 
         newsService.save(news);
         rattrs.addAttribute("companyId", companyId);
@@ -192,8 +187,8 @@ public class HomeController
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("companies/detail/support")
-    public String companySupportForm(@ModelAttribute("companyId") Long companyId, Model model)
-    {
+    public String companySupportForm(@ModelAttribute("companyId") Long companyId,
+                                     @ModelAttribute("isSumWrong") String isSumWrong, Model model) {
         List<Bonus> bonuses = bonusService.findByCompanyId(companyId);
         Company company = companyService.findById(companyId);
 
@@ -208,16 +203,17 @@ public class HomeController
     @PostMapping("companies/detail/support/donate")
     public String donateCompany(@ModelAttribute("companyId") Long companyId,
                                 @RequestParam(value = "donateSum", required = false) String donateSum,
-                                RedirectAttributes rattrs)
-    {
+                                RedirectAttributes attrs) {
         Company company = companyService.findById(companyId);
+        attrs.addAttribute("companyId", companyId);
 
+        if (Float.parseFloat(donateSum) <= 0f) {
+            attrs.addAttribute("isSumWrong", "1");
+            return "redirect:/companies/detail/support";
+        }
         float sum = company.getCurrentSum() + Float.parseFloat(donateSum);
-
         company.setCurrentSum(sum);
-
         companyService.save(company);
-        rattrs.addAttribute("companyId", companyId);
 
         return "redirect:/companies/detail";
     }
@@ -226,14 +222,12 @@ public class HomeController
     @PreAuthorize("isAuthenticated()")
     @GetMapping("companies/detail/support/buy")
     public String buyBonus(@ModelAttribute("companyId") Long companyId, @ModelAttribute("bonusId") Long bonusId,
-                           Principal principal, RedirectAttributes rattrs)
-    {
+                           Principal principal, RedirectAttributes rattrs) {
         Company company = companyService.findById(companyId);
         Bonus bonus = bonusService.findById(bonusId);
         User user = userService.findByUsername(principal.getName());
 
-        if (!bonusService.isExistByUser(user, bonusId))
-        {
+        if (!bonusService.isExistByUser(user, bonusId)) {
             float sum = company.getCurrentSum() + bonus.getPrice();
 
             company.setCurrentSum(sum);
@@ -255,8 +249,7 @@ public class HomeController
     }
 
     @GetMapping("/logout")
-    public String logout()
-    {
+    public String logout() {
         return "logout";
     }
 }
