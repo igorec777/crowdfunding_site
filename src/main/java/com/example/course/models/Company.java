@@ -4,7 +4,12 @@ import lombok.*;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.SortableField;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 
@@ -44,7 +49,6 @@ public class Company
 
     private float companyGoal;
 
-    @Column(length = 50)
     private String expirationDate;
 
     private int totalRate;

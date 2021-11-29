@@ -20,6 +20,7 @@
           <label for="id_name" class="col-md-2 control-label">Company name</label>
           <div class="col-md-10">
             <input type="text" th:field="*{name}" th:value="${company.name}" disabled
+                   pattern="^[a-zA-Z0-9_-]*$" title="Можно использовать только следующие символы: a-z A-z 0-9 _ -"
                    name="name" class="form-control" placeholder="Name" maxlength="200" required="" id="id_name">
           </div>
         </div>

@@ -19,15 +19,15 @@ public class Raiting
     @JoinColumn(name="company_id", nullable=false)
     private Company company;
 
-    @Column()
-    private Long user_id;
+    @ManyToOne
+    private User user;
 
     public Raiting() {
     }
 
-    public Raiting(int value, Company company, Long user_id) {
+    public Raiting(int value, Company company, User user) {
         this.value = value;
         this.company = company;
-        this.user_id = user_id;
+        this.user = user;
     }
 }

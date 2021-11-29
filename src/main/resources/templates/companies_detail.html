@@ -131,7 +131,8 @@
                 </div>
 
                 <form sec:authorize="isAuthenticated()" method="post" th:action="@{/companies/detail/addComment(companyId=${companyId})}" th:object="${newComment}">
-                    <textarea name="body" cols="40" rows="10" class="form-control" placeholder="Write a comment" th:field="*{text}" required="" id="id_body"></textarea>
+                    <textarea name="body" cols="40" rows="10" class="form-control"
+                              placeholder="Write a comment" th:field="*{text}" required="" id="id_body"></textarea>
                     <button type="submit" style="margin-top:10px;" class="btn btn-success">Add comment</button>
                 </form>
             </div>
