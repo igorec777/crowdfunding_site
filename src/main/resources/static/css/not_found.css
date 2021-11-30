@@ -1,6 +1,4 @@
-body {
-    background: #dedede;
-}
-.page-wrap {
-    min-height: 100vh;
+.err {
+ text-align: center;
+ margin-top: 20%;
 }
