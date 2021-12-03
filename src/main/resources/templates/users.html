@@ -60,7 +60,10 @@
                                 <td th:text="${user.lastname}"></td>
                                 <td th:text="${user.email}"></td>
                                 <td th:text="${user.registerDate}"></td>
-                                <td th:text="${user.status}"></td>
+                                <div th:switch="${user.status}">
+                                    <td th:case="0">blocked</td>
+                                    <td th:case="1">active</td>
+                                </div>
                             </tr>
                         </div>
                     </tbody>
