@@ -1,6 +1,6 @@
 .rating {
     border: none;
-    margin-right: 110px;
+    width: 260px;
 }
 
 .rating>input {

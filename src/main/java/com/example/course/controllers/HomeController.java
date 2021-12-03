@@ -115,9 +115,10 @@ public class HomeController {
         else
             raiting = 0;
 
-        User currUser = userService.findByUsername(principal.getName());
         int rateValue;
+
         try {
+            User currUser = userService.findByUsername(principal.getName());
             rateValue = currUser.getRaiting().getValue();
         } catch (NullPointerException ex) {
             rateValue = 0;

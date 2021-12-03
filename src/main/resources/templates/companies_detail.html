@@ -13,10 +13,11 @@
         <link rel="stylesheet" th:href="@{/css/tab.css}">
         <link rel="stylesheet" th:href="@{/css/rating.css}">
         <script th:src="@{/scripts/tab.js}"></script>
+        <script th:src="@{/scripts/rating.js}"></script>
     </head>
     <body>
-
         <header th:insert="header :: nav"></header>
+
         <div class="container">
             <h1 th:text="${company.name}"></h1>
 
@@ -35,8 +36,10 @@
                              th:aria-valuenow="${company.currentSum}"
                              aria-valuemin="0"
                              th:aria-valuemax="${company.companyGoal}"
-                             th:style="'width:'+ ${company.currentSum / company.companyGoal * 100}+'%;'"></div>
+                             th:style="'width:'+ ${company.currentSum / company.companyGoal * 100}+'%;'">
+                        </div>
                     </div>
+
                     <h3>US$ <span th:text="${company.currentSum}"></span></h3>
                     <p>pledged of US$ <span th:text="${company.companyGoal}"></span> goal</p>
                     <h3>Expiration date: <span th:text="${company.expirationDate}"></span></h3>
@@ -45,19 +48,22 @@
                     <form th:action="@{/companies/detail/addRaiting(companyId=${companyId})}" method="post">
                         <fieldset class="rating">
                             <h3 style="display:inline; float:right; margin-top:15px;" th:text="${raiting}"></h3>
-                            <input type="radio" onclick="this.form.submit();" th:id="star-5" name="idChecked" value="5" />
+                            <input type="radio" onclick="this.form.submit()" th:id="star-5" name="idChecked" value="5"/>
                             <label th:for="star-5" title="«5» mark"></label>
-                            <input type="radio" onclick="this.form.submit();" th:id="star-4" name="idChecked" value="4" />
+                            <input type="radio" onclick="this.form.submit()" th:id="star-4" name="idChecked" value="4"/>
                             <label th:for="star-4" title="«4» mark"></label>
-                            <input type="radio" onclick="this.form.submit();" th:id="star-3" name="idChecked" value="3" />
+                            <input type="radio" onclick="this.form.submit()" th:id="star-3" name="idChecked" value="3"/>
                             <label th:for="star-3" title="«3» mark"></label>
-                            <input type="submit" onclick="this.form.submit();" th:id="star-2" name="idChecked" value="2" />
+                            <input type="radio" onclick="this.form.submit()" th:id="star-2" name="idChecked" value="2"/>
                             <label th:for="star-2" title="«2» mark"></label>
-                            <input type="radiot" onclick="this.form.submit();" th:id="star-1" name="idChecked" value="1" />
+                            <input type="radio" onclick="this.form.submit()" th:id="star-1" name="idChecked" value="1"/>
                             <label th:for="star-1" title="«1» mark"></label>
                         </fieldset>
-                        <p th:text="${rateValue}"></p>
                     </form>
+
+                    <script th:inline="javascript">
+                        document.getElementById("star-" + [[${rateValue}]]).checked = true;
+                    </script>
                 </div>
             </div>
 
