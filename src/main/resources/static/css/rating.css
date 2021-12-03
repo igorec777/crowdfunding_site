@@ -1,39 +1,34 @@
-.rating-area {
-    overflow: hidden;
-    width: 260px;
+.rating {
+    border: none;
+    margin-right: 110px;
 }
-.rating-area:not(:checked) > input {
-    display: none;
+
+.rating>input {
+    display: none
 }
-.rating-area:not(:checked) > label {
-    float: right;
-    width: 42px;
-    padding: 0;
-    cursor: pointer;
-    font-size: 32px;
-    line-height: 32px;
-    color: lightgrey;
-    text-shadow: 1px 1px #bbb;
+
+.rating>label:before {
+    margin: 5px;
+    font-size: 2.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    content: '★'
 }
-.rating-area:not(:checked) > label:before {
-    content: '★';
+
+.rating>label {
+    color: #ddd;
+    float: right
 }
-.rating-area > input:checked ~ label {
-    color: gold;
-    text-shadow: 1px 1px #c60;
+
+.rating>input:checked~label,
+.rating:not(:checked)>label:hover,
+.rating:not(:checked)>label:hover~label {
+    color: #FFD700
 }
-.rating-area:not(:checked) > label:hover,
-.rating-area:not(:checked) > label:hover ~ label {
-    color: gold;
-}
-.rating-area > input:checked + label:hover,
-.rating-area > input:checked + label:hover ~ label,
-.rating-area > input:checked ~ label:hover,
-.rating-area > input:checked ~ label:hover ~ label,
-.rating-area > label:hover ~ input:checked ~ label {
-    color: gold;
-    text-shadow: 1px 1px goldenrod;
-}
-.rate-area > label:active {
-    position: relative;
+
+.rating>input:checked+label:hover,
+.rating>input:checked~label:hover,
+.rating>label:hover~input:checked~label,
+.rating>input:checked~label:hover~label {
+    color: #FFED85
 }
