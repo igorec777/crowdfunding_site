@@ -47,6 +47,9 @@ public class User
     @OneToMany(mappedBy="user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Comment> comments;
 
+    @OneToOne(mappedBy = "user")
+    private Raiting raiting;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

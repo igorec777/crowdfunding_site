@@ -19,7 +19,7 @@ public class Raiting
     @JoinColumn(name="company_id", nullable=false)
     private Company company;
 
-    @ManyToOne
+    @OneToOne
     private User user;
 
     public Raiting() {

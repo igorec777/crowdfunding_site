@@ -115,6 +115,15 @@ public class HomeController {
         else
             raiting = 0;
 
+        User currUser = userService.findByUsername(principal.getName());
+        int rateValue;
+        try {
+            rateValue = currUser.getRaiting().getValue();
+        } catch (NullPointerException ex) {
+            rateValue = 0;
+        }
+
+        model.addAttribute("rateValue", rateValue);
         model.addAttribute("raiting", raiting);
         model.addAttribute("comments", comments);
         model.addAttribute("newComment", new Comment());
@@ -151,6 +160,7 @@ public class HomeController {
         Company company = companyService.findById(companyId);
         User currUser = userService.findByUsername(principal.getName());
         Raiting raiting;
+        rateValue = rateValue.substring(0, 1);
 
         if (!raitingService.isExistByCompanyIdAndUserId(companyId, currUser.getId())) {
             raiting = new Raiting(Integer.parseInt(rateValue), company, currUser);
