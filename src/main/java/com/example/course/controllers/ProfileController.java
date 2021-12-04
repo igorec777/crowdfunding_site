@@ -8,6 +8,7 @@ import com.example.course.service.BonusService;
 import com.example.course.service.CompanyService;
 import com.example.course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,32 +64,39 @@ public class ProfileController {
         return "redirect:/";
     }
 
-
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/profile/companies")
     public String getCompanies(Principal principal, Model model) {
         User user = userService.findByUsername(principal.getName());
         List<Company> companies;
 
-        if (userService.isHasRole(user, "ADMIN"))
+        if (userService.hasAuthority(user, "ADMIN")) {
             companies = companyService.findAll();
-        else
+        }
+        else {
             companies = companyService.findByUserId(user.getId());
-
-        model.addAttribute("count", companies.size());
+        }
         model.addAttribute("companies", companies);
 
         return "companies";
     }
 
     @GetMapping("/profile/create/company")
-    public String newCompanyForm(@ModelAttribute("isUnique") String isUnique,
+    public String newCompanyForm(@ModelAttribute("isUnique") String isUnique, Principal principal,
                                  @ModelAttribute("isDateWrong") String isDateWrong, Model model) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         model.addAttribute("company", new Company());
         return "profile_create_company";
     }
 
     @PostMapping("/profile/create/company")
     public String createCompany(@ModelAttribute Company company, Principal principal, RedirectAttributes attrs) {
+
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime localDateTime = LocalDate.parse(company.getExpirationDate(), formatter).atStartOfDay();
 
@@ -111,10 +119,12 @@ public class ProfileController {
 
     @GetMapping("/profile/bonuses")
     public String getBonuses(Model model, Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         User user = userService.findByUsername(principal.getName());
         Set<Bonus> bonuses = bonusService.findByUser(user);
 
-        model.addAttribute("bonusCount", bonuses.size());
         model.addAttribute("bonuses", bonuses);
 
         return "profile_bonuses";
@@ -122,6 +132,9 @@ public class ProfileController {
 
     @GetMapping("profile/create/bonus")
     public String newBonusForm(@ModelAttribute("companyId") Long companyId, Model model, Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         model.addAttribute("bonus", new Bonus());
         model.addAttribute("companyId", companyId);
 
@@ -130,7 +143,10 @@ public class ProfileController {
 
     @PostMapping("profile/create/bonus")
     public String createBonus(@ModelAttribute Bonus bonus, @ModelAttribute("companyId") Long companyId,
-                              RedirectAttributes rattrs) {
+                              RedirectAttributes rattrs, Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         Company company = companyService.findById(companyId);
         bonus.setCompany(company);
         bonusService.save(bonus);
@@ -141,10 +157,13 @@ public class ProfileController {
     }
 
     @GetMapping("profile/edit/company")
-    public String editCompanyForm(@ModelAttribute("companyId") Long companyId, Model model) {
+    public String editCompanyForm(@ModelAttribute("companyId") Long companyId, Model model,
+                                  Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         Company company = companyService.findById(companyId);
 
-        model.addAttribute("companyId", companyId);
         model.addAttribute("company", company);
 
         return "profile_edit_company";
@@ -152,7 +171,10 @@ public class ProfileController {
 
     @PostMapping("profile/edit/company")
     public String changeCompany(@ModelAttribute Company company, @ModelAttribute("companyId") Long companyId,
-                                RedirectAttributes rattrs) {
+                                RedirectAttributes rattrs, Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         Company changedCompany = companyService.findById(companyId);
 
         changedCompany.setTopic(company.getTopic());
@@ -169,23 +191,33 @@ public class ProfileController {
     }
 
     @GetMapping("profile/delete/company")
-    public String deleteCompany(@ModelAttribute("companyId") Long companyId, Model model) {
+    public String deleteCompany(@ModelAttribute("companyId") Long companyId, Model model,
+                                Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         model.addAttribute("companyId", companyId);
 
         return "profile_delete_company_confirm";
     }
 
-    @RequestMapping(value = "/profile/delete/company/confirm", method = RequestMethod.POST, params = "cancel")
-    public String cancelDeleteCompany(@ModelAttribute("companyId") Long companyId, Model model) {
+    @PostMapping(value = "/profile/delete/company/confirm", params = "cancel")
+    public String cancelDeleteCompany(@ModelAttribute("companyId") Long companyId, Model model,
+                                      Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         model.addAttribute("companyId", companyId);
 
         return "redirect:/companies/detail?companyId=" + companyId;
     }
 
-    @RequestMapping(value = "/profile/delete/company/confirm", method = RequestMethod.POST, params = "confirm")
-    public String confirmDeleteCompany(@ModelAttribute("companyId") Long companyId) {
+    @PostMapping(value = "/profile/delete/company/confirm", params = "confirm")
+    public String confirmDeleteCompany(@ModelAttribute("companyId") Long companyId, Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         companyService.deleteById(companyId);
-
         return "redirect:/companies";
     }
 }

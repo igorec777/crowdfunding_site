@@ -19,7 +19,7 @@
             <h1>Table of users</h1>
             <form  class="ui form" method="post" th:action="@{/admin/users}">
                 <div class="btn-group" role="group">
-                    <button type="submit" class="btn btn-default" name="assign" >Change role</button>
+                    <button type="submit" class="btn btn-default" name="assign" >Assign admin</button>
                     <button type="submit" class="btn btn-default" name="block" >Block</button>
                     <button type="submit" class="btn btn-default" name="unblock"><i class="fas fa-unlock-alt"></i></button>
                     <button type="submit" class="btn btn-default" name="delete"><i class="fas fa-trash-alt"></i></button>
@@ -49,20 +49,25 @@
                                 </td>
 
                                 <td th:text="${user.id}"></td>
-                                <div th:if="${user.roles.size} > 1">
-                                    <td th:text="${user.username}" style="color: red"></td>
-                                </div>
-                                <div th:if="${user.roles.size <= 1}">
-                                    <td th:text="${user.username}"></td>
+                                <div th:each="role : ${user.roles}">
+                                    <div th:if="${user.roles.iterator().next().getName().equals('ADMIN')}">
+                                        <td th:text="${user.username}" style="color: red"></td>
+                                    </div>
+                                    <div th:if="${user.roles.iterator().next().getName().equals('USER')}">
+                                        <td th:text="${user.username}" style="color: green"></td>
+                                    </div>
+                                    <div th:if="${user.roles.iterator().next().getName().equals('GUEST')}">
+                                        <td th:text="${user.username}" style="color: yellow"></td>
+                                    </div>
                                 </div>
 
                                 <td th:text="${user.firstname}"></td>
                                 <td th:text="${user.lastname}"></td>
                                 <td th:text="${user.email}"></td>
                                 <td th:text="${user.registerDate}"></td>
-                                <div th:switch="${user.status}">
-                                    <td th:case="0">blocked</td>
-                                    <td th:case="1">active</td>
+                                <div th:switch="${user.isActive}">
+                                    <td th:case="true">active</td>
+                                    <td th:case="false">blocked</td>
                                 </div>
                             </tr>
                         </div>

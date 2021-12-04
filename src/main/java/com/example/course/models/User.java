@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 
 @Entity
@@ -39,8 +40,11 @@ public class User {
     @Column(length = 50)
     private String registerDate;
 
-    @Column(length = 20)
-    private int status;
+    @Column(length = 20, nullable = false)
+    private boolean isActive;
+
+    @OneToOne(mappedBy = "user")
+    private SecureToken secureToken;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Company> companies;
@@ -80,14 +84,14 @@ public class User {
     }
 
     public User(String username, String email, String password, String firstname, String lastname, String registerDate,
-                int status, Set<Company> companies, Set<Comment> comments) {
+                boolean isActive, Set<Company> companies, Set<Comment> comments) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
         this.registerDate = registerDate;
-        this.status = status;
+        this.isActive = isActive;
         this.companies = companies;
         this.comments = comments;
     }
