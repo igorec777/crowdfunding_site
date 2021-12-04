@@ -7,17 +7,14 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class RoleService
-{
+public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Role createOrFoundRoleByName(String rolename)
-    {
+    public Role createOrFoundRoleByName(String rolename) {
         Role role = roleRepository.findByName(rolename);
 
-        if (role == null)
-        {
+        if (role == null) {
             role = new Role(rolename);
             roleRepository.saveAndFlush(role);
 

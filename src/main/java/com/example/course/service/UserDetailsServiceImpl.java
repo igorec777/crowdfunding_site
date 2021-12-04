@@ -12,26 +12,22 @@ import javax.transaction.Transactional;
 
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService
-{
+public class UserDetailsServiceImpl implements UserDetailsService {
     UserRepository userRepository;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository)
-    {
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User findByUsername(String username)
-    {
+    public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() ->
-        new UsernameNotFoundException("User not found with username: " + username));
+                new UsernameNotFoundException("User not found with username: " + username));
     }
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
-    {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUsername(username);
 
         UserDetailsImpl userDetails = new UserDetailsImpl(user);

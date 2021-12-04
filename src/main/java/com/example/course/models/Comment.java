@@ -1,14 +1,14 @@
 package com.example.course.models;
 
 import lombok.Data;
+
 import javax.persistence.*;
 
 
 @Entity
 @Table(name = "comments")
 @Data
-public class Comment
-{
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,10 +19,10 @@ public class Comment
     private String date;
 
     @ManyToOne
-    @JoinColumn(name="company_id", nullable=false)
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

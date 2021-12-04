@@ -1,11 +1,8 @@
 package com.example.course.controllers;
 
 import com.example.course.helpers.DonateHelper;
-import com.example.course.helpers.RegisterHelper;
 import com.example.course.models.*;
 import com.example.course.service.*;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.util.CharArraySet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,6 +13,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.course.helpers.DonateHelper.round;
 import static com.example.course.helpers.RegisterHelper.getCurrentDateTime;
 
 
@@ -23,25 +21,18 @@ import static com.example.course.helpers.RegisterHelper.getCurrentDateTime;
 public class HomeController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private CompanyService companyService;
-
     @Autowired
     private BonusService bonusService;
-
     @Autowired
     private CommentService commentService;
-
     @Autowired
     private NewsService newsService;
-
     @Autowired
     private RaitingService raitingService;
-
     @Autowired
     private SearchService searchService;
-
     @Autowired
     private IndexingService indexingService;
 
@@ -59,14 +50,12 @@ public class HomeController {
     public String getCompanies(@ModelAttribute("topic") String topic, Model model) {
         List<Company> companies;
 
-        if (topic.equals(""))
+        if (topic.equals("")) {
             companies = companyService.findAll();
-        else
+        } else {
             companies = companyService.findByTopic(topic);
-
-        model.addAttribute("count", companies.size());
+        }
         model.addAttribute("companies", companies);
-
         return "companies";
     }
 
@@ -74,7 +63,6 @@ public class HomeController {
     public String searchCompanies(@RequestParam(value = "searchText", required = false) String searchText,
                                   Model model) throws InterruptedException {
         List<Company> companies;
-
         if (searchText.equals(""))
             companies = companyService.findAll();
 
@@ -82,54 +70,37 @@ public class HomeController {
             indexingService.initiateIndexing();
             companies = searchService.getCompanyBasedOnWord(searchText);
         }
-
-        model.addAttribute("count", companies.size());
         model.addAttribute("companies", companies);
-
         return "companies";
     }
 
     @GetMapping("/companies/detail")
-    public String companyDetail(@ModelAttribute("companyId") Long companyId,
-                                Principal principal, Model model) {
-        Long userId;
-        List<Comment> comments = commentService.findByCompanyId(companyId);
-        List<News> news = newsService.findByCompanyId(companyId);
-
-        float raiting;
-
-        if (principal != null)
-            userId = userService.findByUsername(principal.getName()).getId();
-        else
-            userId = null;
+    public String companyDetail(@ModelAttribute("companyId") Long companyId, Model model,
+                                Principal principal) {
+        float averageRating = 0;
+        float userRateValue = 0;
+        boolean isOwner = false;
 
         Company company = companyService.findById(companyId);
-
         if (company == null)
             return "redirect:/404";
 
-        boolean isOwner = company.getUser().getId().equals(userId);
-
-        if (company.getRateCount() > 0)
-            raiting = DonateHelper.round((float) company.getTotalRate() / company.getRateCount(), 2);
-        else
-            raiting = 0;
-
-        int rateValue;
-
-        try {
-            User currUser = userService.findByUsername(principal.getName());
-            rateValue = currUser.getRaiting().getValue();
-        } catch (NullPointerException ex) {
-            rateValue = 0;
+        if (principal != null) {
+            User user = userService.findByUsername(principal.getName());
+            isOwner = company.getUser().getId().equals(user.getId());
+            if (raitingService.findByCompanyIdAndUserId(companyId, user.getId()) != null) {
+                userRateValue = raitingService.findByCompanyIdAndUserId(companyId, user.getId()).getValue();
+            }
         }
 
-        model.addAttribute("rateValue", rateValue);
-        model.addAttribute("raiting", raiting);
-        model.addAttribute("comments", comments);
+        if (company.getRateCount() > 0) {
+            averageRating = round((float) company.getTotalRate() / company.getRateCount(), 2);
+        }
+
+        model.addAttribute("userRateValue", userRateValue);
+        model.addAttribute("averageRating", averageRating);
         model.addAttribute("newComment", new Comment());
         model.addAttribute("newNews", new News());
-        model.addAttribute("news", news);
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("company", company);
 
@@ -139,7 +110,8 @@ public class HomeController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("companies/detail/addComment")
     public String companyAddComment(@ModelAttribute("companyId") Long companyId, @ModelAttribute Comment comment,
-                                    Principal principal, RedirectAttributes rattrs) {
+                                    RedirectAttributes rattrs, Principal principal) {
+
         Company company = companyService.findById(companyId);
         User user = userService.findByUsername(principal.getName());
 
@@ -154,10 +126,11 @@ public class HomeController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "companies/detail/addRaiting", method = RequestMethod.POST)
+    @PostMapping("companies/detail/addRaiting")
     public String companyAddRaiting(@ModelAttribute("companyId") Long companyId,
                                     @RequestParam(value = "idChecked", required = false) String rateValue,
-                                    Principal principal, RedirectAttributes rattrs) {
+                                    RedirectAttributes rattrs, Principal principal) {
+
         Company company = companyService.findById(companyId);
         User currUser = userService.findByUsername(principal.getName());
         Raiting raiting;
@@ -167,8 +140,7 @@ public class HomeController {
             raiting = new Raiting(Integer.parseInt(rateValue), company, currUser);
             company.setTotalRate(company.getTotalRate() + Integer.parseInt(rateValue));
             company.setRateCount(company.getRateCount() + 1);
-        }
-        else {
+        } else {
             raiting = raitingService.findByCompanyIdAndUserId(companyId, currUser.getId());
             company.setTotalRate(company.getTotalRate() - raiting.getValue() + Integer.parseInt(rateValue));
             raiting.setValue(Integer.parseInt(rateValue));
@@ -203,7 +175,6 @@ public class HomeController {
         List<Bonus> bonuses = bonusService.findByCompanyId(companyId);
         Company company = companyService.findById(companyId);
 
-        model.addAttribute("bonusCount", bonuses.size());
         model.addAttribute("bonuses", bonuses);
         model.addAttribute("company", company);
 
@@ -214,16 +185,17 @@ public class HomeController {
     @PostMapping("companies/detail/support/donate")
     public String donateCompany(@ModelAttribute("companyId") Long companyId,
                                 @RequestParam(value = "donateSum", required = false) String donateSum,
-                                RedirectAttributes attrs) {
+                                RedirectAttributes rattrs) {
         Company company = companyService.findById(companyId);
-        attrs.addAttribute("companyId", companyId);
+        rattrs.addAttribute("companyId", companyId);
 
         if (Float.parseFloat(donateSum) <= 0f) {
-            attrs.addAttribute("isSumWrong", "1");
+            rattrs.addAttribute("isSumWrong", "1");
             return "redirect:/companies/detail/support";
         }
         float sum = company.getCurrentSum() + Float.parseFloat(donateSum);
-        company.setCurrentSum(sum);
+
+        company.setCurrentSum(round(sum, 2));
         companyService.save(company);
 
         return "redirect:/companies/detail";
@@ -233,7 +205,7 @@ public class HomeController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("companies/detail/support/buy")
     public String buyBonus(@ModelAttribute("companyId") Long companyId, @ModelAttribute("bonusId") Long bonusId,
-                           Principal principal, RedirectAttributes rattrs) {
+                           RedirectAttributes rattrs, Principal principal) {
         Company company = companyService.findById(companyId);
         Bonus bonus = bonusService.findById(bonusId);
         User user = userService.findByUsername(principal.getName());
@@ -242,15 +214,10 @@ public class HomeController {
             float sum = company.getCurrentSum() + bonus.getPrice();
 
             company.setCurrentSum(sum);
-
             companyService.save(company);
-
             Set<User> users = bonus.getUsers();
-
             users.add(userService.findByUsername(principal.getName()));
-
             bonus.setUsers(users);
-
             bonusService.save(bonus);
         }
 

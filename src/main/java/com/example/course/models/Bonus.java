@@ -10,8 +10,7 @@ import java.util.Set;
 @Entity
 @Table(name = "bonuses")
 @Data
-public class Bonus
-{
+public class Bonus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +24,7 @@ public class Bonus
     private float price;
 
     @ManyToOne
-    @JoinColumn(name="company_id", nullable=false)
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @ManyToMany(fetch = FetchType.LAZY,
@@ -46,5 +45,5 @@ public class Bonus
                     updatable = false),
             foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT),
             inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
-    private  Set<User> users = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 }

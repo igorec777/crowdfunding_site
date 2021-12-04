@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class UserDetailsImpl implements UserDetails
-{
+public class UserDetailsImpl implements UserDetails {
     private User user;
 
     private Long id;
@@ -24,14 +23,12 @@ public class UserDetailsImpl implements UserDetails
     private int status;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(User user)
-    {
+    public UserDetailsImpl(User user) {
         this.user = user;
     }
 
     public UserDetailsImpl(Long id, String username, String password, String firstname, String lastname, String email,
-                           String registerDate, int status, Collection<? extends GrantedAuthority> authorities)
-    {
+                           String registerDate, int status, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -43,8 +40,7 @@ public class UserDetailsImpl implements UserDetails
         this.authorities = authorities;
     }
 
-    public UserDetailsImpl build()
-    {
+    public UserDetailsImpl build() {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
@@ -62,21 +58,18 @@ public class UserDetailsImpl implements UserDetails
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities()
-    {
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
 
     @Override
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
     @Override
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
@@ -96,8 +89,7 @@ public class UserDetailsImpl implements UserDetails
     }
 
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return status != 0;
     }
 }

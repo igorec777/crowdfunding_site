@@ -47,7 +47,7 @@
 
                     <form th:action="@{/companies/detail/addRaiting(companyId=${companyId})}" method="post">
                         <fieldset class="rating">
-                            <h3 style="display:inline; float:right; margin-top:15px;" th:text="${raiting}"></h3>
+                            <h3 style="display:inline; float:right; margin-top:15px;" th:text="${averageRating}"></h3>
                             <input type="radio" onclick="this.form.submit()" th:id="star-5" name="idChecked" value="5"/>
                             <label th:for="star-5" title="«5» mark"></label>
                             <input type="radio" onclick="this.form.submit()" th:id="star-4" name="idChecked" value="4"/>
@@ -62,7 +62,7 @@
                     </form>
 
                     <script th:inline="javascript">
-                        document.getElementById("star-" + [[${rateValue}]]).checked = true;
+                        document.getElementById("star-" + [[${userRateValue}]]).checked = true;
                     </script>
                 </div>
             </div>
@@ -71,10 +71,10 @@
             <div class="tab">
                 <button class="tablinks active" onclick="openTab(event, 'Description')">Description</button>
                 <button class="tablinks" onclick="openTab(event, 'News')">
-                    News <span class="badge badge-dark" th:text="${news.size}"></span>
+                    News <span class="badge badge-dark" th:text="${company.news.size}"></span>
                 </button>
                 <button class="tablinks" onclick="openTab(event, 'Comments')">
-                    Comments <span class="badge badge-dark" th:text="${comments.size}"></span>
+                    Comments <span class="badge badge-dark" th:text="${company.comments.size}"></span>
                 </button>
             </div>
             <!-- Tab content -->
@@ -83,7 +83,7 @@
             </div>
 
             <div id="News" class="tabcontent">
-                <div class="card" th:each="item : ${news}">
+                <div class="card" th:each="item : ${company.news}">
                     <div class="card-body">
                         <h4 class="card-title" th:text="${item.title}"></h4>
                         <h6 class="card-subtitle" th:text="${item.date}"></h6>
@@ -125,7 +125,7 @@
             </div>
 
             <div style="word-wrap: break-word;" id="Comments" class="tabcontent">
-                <div th:each="comment : ${comments}">
+                <div th:each="comment : ${company.comments}">
                     <h4 th:text="${comment.user.username}"></h4>
                     <h6 th:text="${comment.date}"></h6>
                     <p th:text="${comment.text}"></p>

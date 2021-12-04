@@ -8,9 +8,8 @@ import java.util.Optional;
 
 
 @Repository
-public interface RaitingRepository extends JpaRepository<Raiting, Long>
-{
+public interface RaitingRepository extends JpaRepository<Raiting, Long> {
     boolean existsByCompanyIdAndUserId(Long companyId, Long userId);
 
-    Raiting findRaitingByCompanyIdAndUserId(Long companyId, Long userId);
+    Optional<Raiting> findRaitingByCompanyIdAndUserId(Long companyId, Long userId);
 }

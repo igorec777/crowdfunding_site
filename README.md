@@ -1,1 +1,1 @@
-https://crowdfunding-application.herokuapp.com/
+https://crowdfunding-platform1.herokuapp.com/

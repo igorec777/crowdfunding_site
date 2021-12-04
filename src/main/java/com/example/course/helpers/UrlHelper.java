@@ -10,11 +10,10 @@ public class UrlHelper {
         Pattern compiledPattern = Pattern.compile(pattern);
         Matcher matcher = compiledPattern.matcher(url);
 
-        if (matcher.find()){
-             id = matcher.group();
+        if (matcher.find()) {
+            id = matcher.group();
             return "https://www.youtube.com/embed/" + id;
-        }
-        else {
+        } else {
             return "";
         }
     }

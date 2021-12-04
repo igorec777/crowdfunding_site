@@ -2,20 +2,21 @@ package com.example.course.models;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 @Entity
 @Table(name = "users", uniqueConstraints =
-{
-        @UniqueConstraint(columnNames = "username")
-})
+        {
+                @UniqueConstraint(columnNames = "username")
+        })
 @Getter
 @Setter
-public class User
-{
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,14 +42,14 @@ public class User
     @Column(length = 20)
     private int status;
 
-    @OneToMany(mappedBy="user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Company> companies;
 
-    @OneToMany(mappedBy="user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Comment> comments;
 
-    @OneToOne(mappedBy = "user")
-    private Raiting raiting;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Raiting> raiting;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
@@ -73,15 +74,13 @@ public class User
                     updatable = false),
             foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT),
             inverseForeignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
-    private  Set<Bonus> bonuses = new HashSet<>();
+    private Set<Bonus> bonuses = new HashSet<>();
 
-    public User()
-    {
+    public User() {
     }
 
     public User(String username, String email, String password, String firstname, String lastname, String registerDate,
-                int status, Set<Company> companies, Set<Comment> comments)
-    {
+                int status, Set<Company> companies, Set<Comment> comments) {
         this.username = username;
         this.email = email;
         this.password = password;
