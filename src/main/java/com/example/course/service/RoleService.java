@@ -11,15 +11,17 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Role createOrFoundRoleByName(String rolename) {
-        Role role = roleRepository.findByName(rolename);
+    public Role createOrFoundRoleByName(String name) {
+        Role role = roleRepository.findByName(name);
 
         if (role == null) {
-            role = new Role(rolename);
-            roleRepository.saveAndFlush(role);
-
-            return role;
+            role = new Role(name);
         }
+        roleRepository.saveAndFlush(role);
         return role;
+    }
+
+    public Role findByName(String name) {
+        return roleRepository.findByName(name);
     }
 }

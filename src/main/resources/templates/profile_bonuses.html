@@ -12,7 +12,7 @@
     <body>
         <header th:insert="header :: nav"></header>
         <div class="container">
-            <h1 th:if="${bonusCount}">You have <span th:text="${bonusCount}"></span> bonuses:</h1>
+            <h1 th:if="${bonuses.size()}">You have <span th:text="${bonuses.size()}"></span> bonuses:</h1>
 
             <div th:each="bonus : ${bonuses}">
                 <div class="card">
@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <h1 th:unless="${bonusCount}">
+            <h1 th:unless="${bonuses.size()}">
                 <p>You have no bonuses</p>
                 <p>Go to <a href="/companies">companies</a> and support anyone</p>
             </h1>

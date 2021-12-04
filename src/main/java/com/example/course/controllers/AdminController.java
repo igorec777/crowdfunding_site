@@ -19,8 +19,6 @@ import java.util.List;
 public class AdminController {
     @Autowired
     UserService userService;
-    //@Autowired
-    //AuthenticationFacade authentication;
     @Autowired
     RoleService roleService;
 
@@ -51,18 +49,20 @@ public class AdminController {
                              Principal principal) {
 
         User currUser = userService.findByUsername(principal.getName());
-        Role role;
 
         if (checkedUsersId != null) {
             for (String id : checkedUsersId) {
                 User user = userService.findById(Long.parseLong(id));
-                role = roleService.createOrFoundRoleByName("ADMIN");
 
                 if (currUser.getId() != Long.parseLong(id)) {
-                    if (userService.isHasRole(user, "ADMIN"))
-                        userService.deleteRoleById(Long.parseLong(id), role);
-                    else
-                        userService.addRoleById(Long.parseLong(id), role);
+                    if (userService.hasRole(user, "USER")) {
+                        userService.deleteRoleById(Long.parseLong(id), roleService.findByName("USER"));
+                        userService.addRoleById(Long.parseLong(id), roleService.findByName("ADMIN"));
+                    }
+                    else if (userService.hasRole(user, "ADMIN")) {
+                        userService.deleteRoleById(Long.parseLong(id), roleService.findByName("ADMIN"));
+                        userService.addRoleById(Long.parseLong(id), roleService.findByName("USER"));
+                    }
                 }
             }
         }

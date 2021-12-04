@@ -170,8 +170,11 @@ public class HomeController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("companies/detail/support")
-    public String companySupportForm(@ModelAttribute("companyId") Long companyId,
+    public String companySupportForm(@ModelAttribute("companyId") Long companyId, Principal principal,
                                      @ModelAttribute("isSumWrong") String isSumWrong, Model model) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         List<Bonus> bonuses = bonusService.findByCompanyId(companyId);
         Company company = companyService.findById(companyId);
 
@@ -183,9 +186,12 @@ public class HomeController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("companies/detail/support/donate")
-    public String donateCompany(@ModelAttribute("companyId") Long companyId,
+    public String donateCompany(@ModelAttribute("companyId") Long companyId, Principal principal,
                                 @RequestParam(value = "donateSum", required = false) String donateSum,
                                 RedirectAttributes rattrs) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         Company company = companyService.findById(companyId);
         rattrs.addAttribute("companyId", companyId);
 
@@ -202,7 +208,7 @@ public class HomeController {
     }
 
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
     @GetMapping("companies/detail/support/buy")
     public String buyBonus(@ModelAttribute("companyId") Long companyId, @ModelAttribute("bonusId") Long bonusId,
                            RedirectAttributes rattrs, Principal principal) {
@@ -226,6 +232,7 @@ public class HomeController {
         return "redirect:/companies/detail";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/logout")
     public String logout() {
         return "logout";
