@@ -9,16 +9,17 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.course.helpers.TokenGeneratorHelper.generateToken;
+
 @Service
 public class SecureTokenService {
 
     @Autowired
     private SecureTokenRepository secureTokenRepository;
 
-    public static final BytesKeyGenerator DEFAULT_TOKEN_GENERATOR = KeyGenerators.secureRandom(64);
 
     public SecureToken createSecureToken() {
-        String token = new String(Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()));
+        String token = generateToken();
         SecureToken secureToken = new SecureToken();
         secureToken.setToken(token);
         return secureToken;

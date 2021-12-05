@@ -1,5 +1,6 @@
 package com.example.course.service;
 
+import com.example.course.models.PasswordResetToken;
 import com.example.course.models.SecureToken;
 import com.example.course.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ public class EmailSenderService {
 
     @Autowired
     private SecureTokenService secureTokenService;
+
+    @Autowired
+    private PasswordResetTokenService passwordResetTokenService;
 
     @Autowired
     private UserService userService;
@@ -32,12 +36,9 @@ public class EmailSenderService {
     public void sendVerificationEmail(User user) {
         SecureToken secureToken = secureTokenService.createSecureToken();
 
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(user.getEmail());
-        simpleMailMessage.setSubject(String.format("Hello %s!", user.getUsername()));
-        simpleMailMessage.setText(String.format("Go to http://localhost:8081/verify/?token=%s to verify your account",
-                secureToken.getToken()));
-        gmailSender.send(simpleMailMessage);
+        sendEmail(user.getEmail(), "Verify email",
+                String.format("Hello, %s! Go to http://localhost:8081/verify/?token=%s to verify your email",
+                user.getUsername(), secureToken.getToken()), gmailSender);
 
         SecureToken oldToken = secureTokenService.findByUserId(user.getId());
         if (oldToken != null) {
@@ -46,5 +47,30 @@ public class EmailSenderService {
         userService.save(user);
         secureToken.setUser(user);
         secureTokenService.save(secureToken);
+    }
+
+    public void sendResetPasswordEmail(String email) {
+        PasswordResetToken passwordResetToken = passwordResetTokenService.create();
+
+        sendEmail(email, "Reset password",
+                String.format("Go to http://localhost:8081/changePassword/?token=%s to reset your password",
+                        passwordResetToken.getToken()), gmailSender);
+
+        User user = userService.findByEmail(email);
+        PasswordResetToken oldToken = passwordResetTokenService.findByUserId(user.getId());
+
+        if (oldToken != null) {
+            passwordResetTokenService.deleteByUserId(oldToken.getUser().getId());
+        }
+        passwordResetToken.setUser(user);
+        passwordResetTokenService.save(passwordResetToken);
+    }
+
+    private void sendEmail(String toEmail, String subject, String text, JavaMailSender sender) {
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(toEmail);
+        simpleMailMessage.setSubject(subject);
+        simpleMailMessage.setText(text);
+        sender.send(simpleMailMessage);
     }
 }

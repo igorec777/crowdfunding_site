@@ -50,14 +50,10 @@
 
                                 <td th:text="${user.id}"></td>
                                 <div th:each="role : ${user.roles}">
-                                    <div th:if="${user.roles.iterator().next().getName().equals('ADMIN')}">
-                                        <td th:text="${user.username}" style="color: red"></td>
-                                    </div>
-                                    <div th:if="${user.roles.iterator().next().getName().equals('USER')}">
-                                        <td th:text="${user.username}" style="color: green"></td>
-                                    </div>
-                                    <div th:if="${user.roles.iterator().next().getName().equals('GUEST')}">
-                                        <td th:text="${user.username}" style="color: yellow"></td>
+                                    <div th:switch="${user.roles.iterator().next().getName()}">
+                                        <td th:case="'ADMIN'" th:text="${user.username}" style="color: red"></td>
+                                        <td th:case="'USER'" th:text="${user.username}" style="color: green"></td>
+                                        <td th:case="'GUEST'" th:text="${user.username}" style="color: sandybrown"></td>
                                     </div>
                                 </div>
 

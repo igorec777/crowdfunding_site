@@ -21,6 +21,10 @@
                 Can't login
             </div>
 
+            <div th:if="${!isPasswordChanged.equals('')}" class="alert alert-success" role="alert">
+                Password has been changed
+            </div>
+
             <form th:action="@{/login}"  method="post">
                 <div class="form-group row">
                     <label for="inputLogin" class="col-sm-2 col-form-label">Login</label>
@@ -34,6 +38,7 @@
                         <input type="password" class="form-control" id="inputPassword" name="password" required>
                     </div>
                 </div>
+                <a href="/resetPassword">Forgot password?</a>
                 <div class="form-group row">
                     <div class="col-sm-10">
                         <button type="submit" class="btn btn-success" value="Login">Log in</button>
