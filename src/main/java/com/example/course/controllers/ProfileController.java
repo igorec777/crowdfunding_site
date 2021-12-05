@@ -40,6 +40,9 @@ public class ProfileController {
     private RoleService roleService;
 
     @Autowired
+    private SecureTokenService secureTokenService;
+
+    @Autowired
     private EmailSenderService emailSenderService;
 
     @Autowired
@@ -48,7 +51,10 @@ public class ProfileController {
     @GetMapping("/profile/data")
     public String getProfile(Model model, Principal principal,
                              @ModelAttribute("duplicateField") String duplicateField) {
+        User user = userService.findByUsername(principal.getName());
+        boolean isVerified = secureTokenService.findByUserId(user.getId()) == null;
         model.addAttribute("user", userService.findByUsername(principal.getName()));
+        model.addAttribute("isVerified", isVerified);
         return "profile_data";
     }
 
