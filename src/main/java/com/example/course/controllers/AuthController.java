@@ -4,6 +4,7 @@ import com.example.course.helpers.RegisterHelper;
 import com.example.course.models.Role;
 import com.example.course.models.SecureToken;
 import com.example.course.models.User;
+import com.example.course.service.EmailSenderService;
 import com.example.course.service.RoleService;
 import com.example.course.service.SecureTokenService;
 import com.example.course.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +26,7 @@ import java.util.*;
 
 import static com.example.course.helpers.RegisterHelper.getCurrentDateTime;
 
-@PreAuthorize("isAnonymous()")
+
 @Controller
 public class AuthController {
     @Autowired
@@ -34,30 +36,36 @@ public class AuthController {
     private RoleService roleService;
 
     @Autowired
+    private EmailSenderService emailSenderService;
+
+    @Autowired
     private SecureTokenService secureTokenService;
 
 
+    @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
     public String loginForm() {
         return "login";
     }
 
+    @PreAuthorize("isAnonymous()")
     @GetMapping("/register")
-    public String registerForm(@ModelAttribute("isDuplicate") String isDuplicate) {
-        if (isDuplicate.equals(""))
-            isDuplicate = "0";
+    public String registerForm(@ModelAttribute("duplicateField") String duplicateField) {
         return "register";
     }
 
+    @PreAuthorize("isAnonymous()")
     @PostMapping("/process_register")
     public String processRegistration(User user, RedirectAttributes rattrs) {
-        Set<Role> roles = new HashSet<>();
-        Role role;
 
         if (userService.isExistByUsername(user.getUsername())) {
-            rattrs.addAttribute("isDuplicate", "1");
+            rattrs.addFlashAttribute("duplicateField", "login");
             return "redirect:/register";
         }
+//        else if (userService.isExistByEmail(user.getEmail())) {
+//            rattrs.addFlashAttribute("duplicateField", "email");
+//            return "redirect:/register";
+//        }
         else if (userService.findAll().isEmpty()) {
             createAdmin(user);
             return "redirect:/";
@@ -67,28 +75,31 @@ public class AuthController {
             user.getRoles().add(roleService.createOrFoundRoleByName("GUEST"));
             user.setRegisterDate(getCurrentDateTime());
             user.setActive(true);
-            userService.save(user);
 
             //todo sending email
-            userService.sendVerificationEmail(user);
+            emailSenderService.sendVerificationEmail(user);
 
-            return "verify";
+            return "verify_message";
         }
     }
 
-    @PreAuthorize("isAuthenticated() and hasAuthority('GUEST')")
     @GetMapping("/verify")
-    public String verifyAccount(@RequestParam(name = "token") String token) {
-        SecureToken secureToken = secureTokenService.findByToken(token);
-        if (secureToken != null) {
-            User user = secureToken.getUser();
-            user.getRoles().removeIf(r -> r.getName().equals("GUEST"));
-            user.getRoles().add(roleService.createOrFoundRoleByName("USER"));
-            userService.save(user);
-            secureTokenService.deleteById(secureToken.getId());
-            return "complete_verify";
+    public String verifyAccount(@RequestParam(name = "token", defaultValue = "") String token, Model model) {
+        if (token.equals("")) {
+            model.addAttribute("wrongToken", true);
+            return "verify";
         }
         else {
+            SecureToken secureToken = secureTokenService.findByToken(token);
+            if (secureToken != null) {
+                User user = secureToken.getUser();
+                if (user.getRoles().removeIf(r -> r.getName().equals("GUEST"))) {
+                    user.getRoles().add(roleService.createOrFoundRoleByName("USER"));
+                    userService.save(user);
+                    secureTokenService.deleteById(secureToken.getId());
+                    return "complete_verify";
+                }
+            }
             return "redirect:/404";
         }
     }

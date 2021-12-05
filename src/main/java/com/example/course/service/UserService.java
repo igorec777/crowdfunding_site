@@ -24,12 +24,6 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    private JavaMailSender mailSender;
-
-
-    @Autowired
-    private SecureTokenService secureTokenService;
 
     public User findByUsername(String username) {
         return userDetailsService.findByUsername(username);
@@ -44,12 +38,11 @@ public class UserService {
     }
 
     public boolean isExistByUsername(String username) {
-        List<User> users = findAll();
+        return userRepository.existsByUsername(username);
+    }
 
-        for (User user : users)
-            if (user.getUsername().equals(username))
-                return true;
-        return false;
+    public boolean isExistByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     public boolean hasAuthority(User user, String role) {
@@ -105,18 +98,5 @@ public class UserService {
         User user = findById(id);
         user.getRoles().remove(role);
         save(user);
-    }
-
-    public void sendVerificationEmail(User user) {
-        SecureToken secureToken = secureTokenService.createSecureToken();
-        secureToken.setUser(user);
-        secureTokenService.save(secureToken);
-
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(user.getEmail());
-        simpleMailMessage.setSubject(String.format("Hello %s!", user.getUsername()));
-        simpleMailMessage.setText(String.format("Go to http://localhost:8081/verify/?token=%s to verify your account",
-                secureToken.getToken()));
-        mailSender.send(simpleMailMessage);
     }
 }

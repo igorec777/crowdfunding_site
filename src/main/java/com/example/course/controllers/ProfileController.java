@@ -64,12 +64,14 @@ public class ProfileController {
         return "redirect:/";
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/profile/companies")
     public String getCompanies(Principal principal, Model model) {
         User user = userService.findByUsername(principal.getName());
         List<Company> companies;
 
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         if (userService.hasAuthority(user, "ADMIN")) {
             companies = companyService.findAll();
         }
@@ -180,7 +182,7 @@ public class ProfileController {
         changedCompany.setTopic(company.getTopic());
         changedCompany.setTags(company.getTags());
         changedCompany.setDescription(company.getDescription());
-        changedCompany.setYoutubeURL(company.getYoutubeURL());
+        changedCompany.setYoutubeURL(buildEmbedUrl(company.getYoutubeURL()));
         changedCompany.setCompanyGoal(company.getCompanyGoal());
         changedCompany.setExpirationDate(company.getExpirationDate());
 

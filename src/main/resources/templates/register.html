@@ -15,8 +15,8 @@
         <div class="container">
             <h1>Register new account</h1>
 
-            <div th:if="${isDuplicate} == '1'" class="alert alert-danger" role="alert">
-                This login is already exists
+            <div th:if="${!duplicateField.equals('')}" class="alert alert-danger" role="alert">
+                <p th:text="${'User with this ' + duplicateField + ' already exist'}"></p>
             </div>
 
             <form th:action="@{/process_register}"  method="post" enctype="multipart/form-data">

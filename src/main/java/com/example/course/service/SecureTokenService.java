@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SecureTokenService {
@@ -20,7 +21,6 @@ public class SecureTokenService {
         String token = new String(Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()));
         SecureToken secureToken = new SecureToken();
         secureToken.setToken(token);
-        this.save(secureToken);
         return secureToken;
     }
 
@@ -32,11 +32,9 @@ public class SecureTokenService {
         return secureTokenRepository.findByToken(token).orElse(null);
     }
 
+    @Transactional
     public void deleteById(Long id) {
-        secureTokenRepository.deleteById(id);
+        secureTokenRepository.deleteSecureTokenById(id);
+        secureTokenRepository.flush();
     }
-
-//    public SecureToken findByTokenAndUserId(String token, Long id) {
-//        return secureTokenRepository.findByTokenAndUserId(token, id).orElse(null);
-//    }
 }
