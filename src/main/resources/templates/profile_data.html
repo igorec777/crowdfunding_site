@@ -19,6 +19,10 @@
                 <p th:text="${'User with this ' + duplicateField + ' already exist'}"></p>
             </div>
 
+            <div th:if="${!isVerified}" class="alert alert-warning" role="alert">
+                Your email isn't verified
+            </div>
+
             <form method="post" th:object="${user}" th:action="@{/profile/data}">
                 <div class="form-group row">
                     <label for="inputLogin" class="col-sm-2 control-label">Login</label>
