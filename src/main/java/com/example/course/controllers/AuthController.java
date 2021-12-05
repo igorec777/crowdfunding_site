@@ -66,10 +66,10 @@ public class AuthController {
             rattrs.addFlashAttribute("duplicateField", "login");
             return "redirect:/register";
         }
-//        else if (userService.isExistByEmail(user.getEmail())) {
-//            rattrs.addFlashAttribute("duplicateField", "email");
-//            return "redirect:/register";
-//        }
+        else if (userService.isExistByEmail(user.getEmail())) {
+            rattrs.addFlashAttribute("duplicateField", "email");
+            return "redirect:/register";
+        }
         else if (userService.findAll().isEmpty()) {
             createAdmin(user);
             return "redirect:/";
@@ -87,24 +87,19 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
-    public String verifyAccount(@RequestParam(name = "token", defaultValue = "") String token, Model model) {
-        if (token.equals("")) {
-            model.addAttribute("wrongToken", true);
-            return "verify";
-        }
-        else {
-            SecureToken secureToken = secureTokenService.findByToken(token);
-            if (secureToken != null) {
-                User user = secureToken.getUser();
-                if (user.getRoles().removeIf(r -> r.getName().equals("GUEST"))) {
-                    user.getRoles().add(roleService.createOrFoundRoleByName("USER"));
-                    userService.save(user);
-                    secureTokenService.deleteById(secureToken.getId());
-                    return "complete_verify";
-                }
+    public String verifyAccount(@RequestParam(name = "token", defaultValue = "") String token) {
+
+        SecureToken secureToken = secureTokenService.findByToken(token);
+        if (secureToken != null) {
+            User user = secureToken.getUser();
+            if (user.getRoles().removeIf(r -> r.getName().equals("GUEST"))) {
+                user.getRoles().add(roleService.createOrFoundRoleByName("USER"));
+                userService.save(user);
+                secureTokenService.deleteById(secureToken.getId());
+                return "complete_verify";
             }
-            return "redirect:/404";
         }
+        return "verify";
     }
 
     @GetMapping("/resetPassword")

@@ -11,11 +11,10 @@
 <body>
 
 <header th:insert="header :: nav"></header>
-<h1>You need verify your email</h1>
+<h1><pre>You are not verified your email
+    or your token is wrong</pre></h1>
 
-<h3 th:if="${wrongToken == true}">
-    <p>Verification token is wrong</p>
-</h3>
+
 <a href="/">Go to home</a>
 
 </body>

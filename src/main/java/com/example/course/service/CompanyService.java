@@ -1,5 +1,6 @@
 package com.example.course.service;
 
+import com.example.course.models.Bonus;
 import com.example.course.models.Company;
 import com.example.course.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,14 @@ public class CompanyService {
 
         companies.removeIf(com -> !com.getUser().getId().equals(id));
         return companies;
+    }
+
+    public int getBackersCount(Company company) {
+        int backers = 0;
+        for (Bonus bonus : company.getBonuses()) {
+            backers += bonus.getUsers().size();
+        }
+        return backers;
     }
 
     public boolean isExistByCompanyName(String name) {

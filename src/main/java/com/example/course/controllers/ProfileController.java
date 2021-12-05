@@ -98,6 +98,16 @@ public class ProfileController {
         return "companies";
     }
 
+    @GetMapping("/profile/companies/favourite")
+    public String getFavouriteCompanies(Principal principal, Model model) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
+        User user = userService.findByUsername(principal.getName());
+        model.addAttribute("companies", user.getFavoriteCompanies());
+        return "companies";
+    }
+
     @GetMapping("/profile/create/company")
     public String newCompanyForm(@ModelAttribute("isUnique") String isUnique, Principal principal,
                                  @ModelAttribute("isDateWrong") String isDateWrong, Model model) {

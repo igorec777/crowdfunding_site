@@ -1,5 +1,6 @@
 package com.example.course.service;
 
+import com.example.course.models.Company;
 import com.example.course.models.Role;
 import com.example.course.models.SecureToken;
 import com.example.course.models.User;
@@ -47,6 +48,11 @@ public class UserService {
 
     public boolean isExistByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public boolean isCompanyFavourite(User user, Long companyId) {
+        return user.getFavoriteCompanies().stream()
+                .anyMatch(com ->  com.getId().equals(companyId));
     }
 
     public boolean hasAuthority(User user, String role) {

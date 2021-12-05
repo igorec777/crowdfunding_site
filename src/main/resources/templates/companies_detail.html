@@ -23,6 +23,13 @@
 
             <div class="row">
                 <div class="col-md-8">
+                    <span th:if="${isFavourite}">
+                        <a th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">Remove from favourites</a>
+                    </span>
+                    <span th:if="${!isFavourite}">
+                        <a th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">Add to favourite</a>
+                    </span>
+
                     <h2 th:text="${company.topic}"></h2>
                     <h4 th:text="${company.tags}"></h4>
                     <div th:if="${company.youtubeURL != ''}" class="video-wrap">
@@ -42,6 +49,7 @@
 
                     <h3>US$ <span th:text="${company.currentSum}"></span></h3>
                     <p>pledged of US$ <span th:text="${company.companyGoal}"></span> goal</p>
+                    <p> <span th:text="${backers}"></span> backers</p>
                     <h3>Expiration date: <span th:text="${company.expirationDate}"></span></h3>
                     <a class="btn btn-success" th:href="@{/companies/detail/support(companyId=${company.id})}">Support company</a>
 

@@ -4,6 +4,7 @@ import com.example.course.helpers.DonateHelper;
 import com.example.course.models.*;
 import com.example.course.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,11 +76,12 @@ public class HomeController {
     }
 
     @GetMapping("/companies/detail")
-    public String companyDetail(@ModelAttribute("companyId") Long companyId, Model model,
-                                Principal principal) {
+    public String companyDetail(@ModelAttribute("companyId") Long companyId,
+                                Model model, Principal principal) {
         float averageRating = 0;
         float userRateValue = 0;
         boolean isOwner = false;
+        boolean isFavourite = false;
 
         Company company = companyService.findById(companyId);
         if (company == null)
@@ -87,6 +89,7 @@ public class HomeController {
 
         if (principal != null) {
             User user = userService.findByUsername(principal.getName());
+            isFavourite = userService.isCompanyFavourite(user, companyId);
             isOwner = company.getUser().getId().equals(user.getId());
             if (raitingService.findByCompanyIdAndUserId(companyId, user.getId()) != null) {
                 userRateValue = raitingService.findByCompanyIdAndUserId(companyId, user.getId()).getValue();
@@ -97,11 +100,13 @@ public class HomeController {
             averageRating = round((float) company.getTotalRate() / company.getRateCount(), 2);
         }
 
+        model.addAttribute("backers", companyService.getBackersCount(company));
         model.addAttribute("userRateValue", userRateValue);
         model.addAttribute("averageRating", averageRating);
         model.addAttribute("newComment", new Comment());
         model.addAttribute("newNews", new News());
         model.addAttribute("isOwner", isOwner);
+        model.addAttribute("isFavourite", isFavourite);
         model.addAttribute("company", company);
 
         return "companies_detail";
@@ -229,6 +234,24 @@ public class HomeController {
 
         rattrs.addAttribute("companyId", companyId);
 
+        return "redirect:/companies/detail";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("companies/detail/addFavourite")
+    public String addToFavourite(@ModelAttribute("companyId") Long companyId,
+                                 Principal principal, RedirectAttributes rattrs) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
+        User user = userService.findByUsername(principal.getName());
+
+        if (!user.getFavoriteCompanies().add(companyService.findById(companyId))) {
+            user.getFavoriteCompanies().remove(companyService.findById(companyId));
+        }
+        userService.save(user);
+
+        rattrs.addAttribute("companyId", companyId);
         return "redirect:/companies/detail";
     }
 
