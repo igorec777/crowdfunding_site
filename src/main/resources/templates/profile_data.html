@@ -15,6 +15,9 @@
 
         <div class="container">
             <h1>My profile data:</h1>
+            <div th:if="${!duplicateField.equals('')}" class="alert alert-danger" role="alert">
+                <p th:text="${'User with this ' + duplicateField + ' already exist'}"></p>
+            </div>
 
             <form method="post" th:object="${user}" th:action="@{/profile/data}">
                 <div class="form-group row">

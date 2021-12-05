@@ -39,6 +39,10 @@ public class EmailSenderService {
                 secureToken.getToken()));
         gmailSender.send(simpleMailMessage);
 
+        SecureToken oldToken = secureTokenService.findByUserId(user.getId());
+        if (oldToken != null) {
+            secureTokenService.deleteById(oldToken.getId());
+        }
         userService.save(user);
         secureToken.setUser(user);
         secureTokenService.save(secureToken);

@@ -1,6 +1,7 @@
 package com.example.course.repository;
 
 import com.example.course.models.SecureToken;
+import com.example.course.service.SecureTokenService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,6 @@ public interface SecureTokenRepository extends JpaRepository<SecureToken, Long> 
     @Modifying
     @Query("delete from SecureToken st where st.id = ?1")
     void deleteSecureTokenById(Long id);
+
+    SecureToken findByUserId(Long id);
 }

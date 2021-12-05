@@ -32,6 +32,10 @@ public class SecureTokenService {
         return secureTokenRepository.findByToken(token).orElse(null);
     }
 
+    public SecureToken findByUserId(Long id) {
+        return secureTokenRepository.findByUserId(id);
+    }
+
     @Transactional
     public void deleteById(Long id) {
         secureTokenRepository.deleteSecureTokenById(id);

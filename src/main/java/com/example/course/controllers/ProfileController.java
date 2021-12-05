@@ -4,9 +4,7 @@ import com.example.course.helpers.RegisterHelper;
 import com.example.course.models.Bonus;
 import com.example.course.models.Company;
 import com.example.course.models.User;
-import com.example.course.service.BonusService;
-import com.example.course.service.CompanyService;
-import com.example.course.service.UserService;
+import com.example.course.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.course.helpers.RegisterHelper.passwordEncoder;
 import static com.example.course.helpers.UrlHelper.*;
 
 
@@ -38,29 +37,45 @@ public class ProfileController {
     private UserService userService;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+    @Autowired
     private BonusService bonusService;
 
     @GetMapping("/profile/data")
-    public String getProfile(Model model, Principal principal) {
+    public String getProfile(Model model, Principal principal,
+                             @ModelAttribute("duplicateField") String duplicateField) {
         model.addAttribute("user", userService.findByUsername(principal.getName()));
-
         return "profile_data";
     }
 
     @PostMapping("/profile/data")
-    public String changeProfile(@ModelAttribute User changedUser, Principal principal) {
-        RegisterHelper registerHelper = new RegisterHelper();
+    public String changeProfile(@ModelAttribute User changedUser, Principal principal,
+                                RedirectAttributes rattrs) {
 
         User user = userService.findByUsername(principal.getName());
 
         user.setFirstname(changedUser.getFirstname());
         user.setLastname(changedUser.getLastname());
-        user.setEmail(changedUser.getEmail());
+        user.setPassword(passwordEncoder(changedUser));
 
-        user.setPassword(registerHelper.passwordEncoder(changedUser));
-
+        if (!user.getEmail().equals(changedUser.getEmail())) {
+            if (userService.isExistByEmail(changedUser.getEmail())) {
+                rattrs.addFlashAttribute("duplicateField", "email");
+                return "redirect:/profile/data";
+            }
+            user.setEmail(changedUser.getEmail());
+            if (!userService.hasRole(user, "ADMIN")) {
+                user.getRoles().clear();
+                user.getRoles().add(roleService.createOrFoundRoleByName("GUEST"));
+                emailSenderService.sendVerificationEmail(user);
+                return "verify_message";
+            }
+        }
         userService.save(user);
-
         return "redirect:/";
     }
 
