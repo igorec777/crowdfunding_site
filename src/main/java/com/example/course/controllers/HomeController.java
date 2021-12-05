@@ -48,13 +48,18 @@ public class HomeController {
     }
 
     @GetMapping("/companies")
-    public String getCompanies(@ModelAttribute("topic") String topic, Model model) {
+    public String getCompanies(@ModelAttribute("topic") String topic, Model model,
+                               Principal principal) {
         List<Company> companies;
 
         if (topic.equals("")) {
             companies = companyService.findAll();
         } else {
             companies = companyService.findByTopic(topic);
+        }
+        if (principal != null) {
+            User user = userService.findByUsername(principal.getName());
+            model.addAttribute("favouriteCompanies", user.getFavoriteCompanies());
         }
         model.addAttribute("companies", companies);
         return "companies";

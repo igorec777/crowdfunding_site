@@ -105,6 +105,7 @@ public class ProfileController {
         }
         User user = userService.findByUsername(principal.getName());
         model.addAttribute("companies", user.getFavoriteCompanies());
+        model.addAttribute("favouriteCompanies", user.getFavoriteCompanies());
         return "companies";
     }
 

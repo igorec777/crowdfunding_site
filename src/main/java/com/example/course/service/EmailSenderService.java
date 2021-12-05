@@ -25,14 +25,6 @@ public class EmailSenderService {
     @Qualifier("javaMailSenderGmail")
     private JavaMailSender gmailSender;
 
-    @Autowired
-    @Qualifier("javaMailSenderMailRu")
-    private JavaMailSender mailRuSender;
-
-    @Autowired
-    @Qualifier("javaMailSenderYandex")
-    private JavaMailSender yandexSender;
-
     public void sendVerificationEmail(User user) {
         SecureToken secureToken = secureTokenService.createSecureToken();
 
