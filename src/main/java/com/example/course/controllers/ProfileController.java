@@ -20,8 +20,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.example.course.helpers.RegisterHelper.passwordEncoder;
 import static com.example.course.helpers.UrlHelper.*;
@@ -99,6 +101,7 @@ public class ProfileController {
         else {
             companies = companyService.findByUserId(user.getId());
         }
+        companyService.calculateAverageForCompanies(companies);
         model.addAttribute("companies", companies);
 
         return "companies";
@@ -110,7 +113,9 @@ public class ProfileController {
             return "redirect:/verify";
         }
         User user = userService.findByUsername(principal.getName());
-        model.addAttribute("companies", user.getFavoriteCompanies());
+        List<Company> companies = new ArrayList<>(user.getFavoriteCompanies());
+        companyService.calculateAverageForCompanies(companies);
+        model.addAttribute("companies", companies);
         model.addAttribute("favouriteCompanies", user.getFavoriteCompanies());
         return "companies";
     }

@@ -1,5 +1,6 @@
 package com.example.course.service;
 
+import com.example.course.models.Company;
 import com.example.course.models.Raiting;
 import com.example.course.repository.RaitingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,4 @@ public class RaitingService {
     public Raiting findByCompanyIdAndUserId(Long companyId, Long userId) {
         return raitingRepository.findRaitingByCompanyIdAndUserId(companyId, userId).orElse(null);
     }
-
 }

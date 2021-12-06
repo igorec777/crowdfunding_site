@@ -51,13 +51,18 @@ public class Company {
 
     private String expirationDate;
 
-    private int totalRate;
-
-    private int rateCount;
+    @Transient
+    private float averageRate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToMany(mappedBy = "favoriteCompanies")
+    private Set<User> likedUsers;
+
+    @ManyToMany(mappedBy = "backedCompanies")
+    private Set<User> backers;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Bonus> bonuses;

@@ -1,74 +1,74 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>My profile</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-        <link rel="stylesheet" th:href="@{/css/main.css}">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My profile</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
 
-    <body>
-        <header th:insert="header :: nav"></header>
+<body>
+<header th:insert="header :: nav"></header>
 
-        <div class="container">
-            <h1>My profile data:</h1>
-            <div th:if="${!duplicateField.equals('')}" class="alert alert-danger" role="alert">
-                <p th:text="${'User with this ' + duplicateField + ' already exist'}"></p>
+<div class="container">
+    <h1>My profile data:</h1>
+    <div th:if="${!duplicateField.equals('')}" class="alert alert-danger" role="alert">
+        <p th:text="${'User with this ' + duplicateField + ' already exist'}"></p>
+    </div>
+
+    <div th:if="${!isVerified}" class="alert alert-warning" role="alert">
+        Your email isn't verified
+    </div>
+
+    <form method="post" th:object="${user}" th:action="@{/profile/data}">
+        <div class="form-group row">
+            <label for="inputLogin" class="col-sm-2 control-label">Login</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="inputLogin" required
+                       th:field="*{username}" disabled th:value="${user.username}">
             </div>
-
-            <div th:if="${!isVerified}" class="alert alert-warning" role="alert">
-                Your email isn't verified
-            </div>
-
-            <form method="post" th:object="${user}" th:action="@{/profile/data}">
-                <div class="form-group row">
-                    <label for="inputLogin" class="col-sm-2 control-label">Login</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputLogin" required
-                               th:field="*{username}" disabled th:value="${user.username}">
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="inputPassword" class="col-sm-2 control-label">Password</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" required id="inputPassword" th:field="*{password}">
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="inputFirstName" class="col-sm-2 control-label">First name</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputFirstName" required
-                               th:field="*{firstname}" th:value="${user.firstname}">
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="inputLastName" class="col-sm-2 control-label">Last name</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputLastName" required
-                               th:field="*{lastname}" th:value="${user.lastname}">
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail" required
-                               th:field="*{email}" th:value="${user.email}">
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-md-10">
-                        <button type="submit" class="btn btn-success">Save changes</button>
-                    </div>
-                </div>
-            </form>
         </div>
-    </body>
+
+        <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 control-label">Password</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control" required id="inputPassword" th:field="*{password}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="inputFirstName" class="col-sm-2 control-label">First name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="inputFirstName" required
+                       th:field="*{firstname}" th:value="${user.firstname}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="inputLastName" class="col-sm-2 control-label">Last name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="inputLastName" required
+                       th:field="*{lastname}" th:value="${user.lastname}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+                <input type="email" class="form-control" id="inputEmail" required
+                       th:field="*{email}" th:value="${user.email}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-10">
+                <button type="submit" class="btn btn-success">Save changes</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
 </html>

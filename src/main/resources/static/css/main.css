@@ -29,19 +29,19 @@ h1
 }
 
 .btn-logout {
- display: block;
- background-color: #3b3455;
- vertical-align: middle;
- text-decoration: none;
- text-align: center;
- padding-top: 10px;
- margin-left: 45%;
- margin-top: 20%;
- width: 155px;
- height: 45px;
- border: 0;
- border-radius: 5px;
- color: white;
+    display: block;
+    background-color: #3b3455;
+    vertical-align: middle;
+    text-decoration: none;
+    text-align: center;
+    padding-top: 10px;
+    margin-left: 45%;
+    margin-top: 20%;
+    width: 155px;
+    height: 45px;
+    border: 0;
+    border-radius: 5px;
+    color: white;
 }
 
 .favorite_no {
@@ -61,4 +61,3 @@ h1
     color: #FFD700;
     text-decoration: none;
 }
-

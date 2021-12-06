@@ -1,12 +1,16 @@
 package com.example.course.service;
 
-import com.example.course.models.Bonus;
 import com.example.course.models.Company;
+import com.example.course.models.Raiting;
+import com.example.course.models.User;
 import com.example.course.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+
+import static com.example.course.helpers.DonateHelper.round;
 
 
 @Service
@@ -25,14 +29,6 @@ public class CompanyService {
         return companies;
     }
 
-    public int getBackersCount(Company company) {
-        int backers = 0;
-        for (Bonus bonus : company.getBonuses()) {
-            backers += bonus.getUsers().size();
-        }
-        return backers;
-    }
-
     public boolean isExistByCompanyName(String name) {
         return companyRepository.existsByName(name);
     }
@@ -45,6 +41,22 @@ public class CompanyService {
         return companies;
     }
 
+    public float getAverageRatingByCompany(Company company) {
+        Set<Raiting> raitings = company.getRaitings();
+        int total = 0;
+        if (raitings.isEmpty()) {
+            return total;
+        }
+        for (Raiting raiting : raitings) {
+            total += raiting.getValue();
+        }
+        return round((float) total / raitings.size(), 2);
+    }
+
+    public void calculateAverageForCompanies(List<Company> companies) {
+        companies.forEach(com -> com.setAverageRate(getAverageRatingByCompany(com)));
+    }
+
     public Company findById(Long id) {
         return companyRepository.findById(id).orElse(null);
     }
@@ -54,6 +66,12 @@ public class CompanyService {
     }
 
     public void deleteById(Long id) {
-        companyRepository.deleteById(id);
+        if (companyRepository.findById(id).isPresent()) {
+            Company company = companyRepository.findById(id).get();
+            company.getBackers().forEach(user -> user.getBackedCompanies().removeIf(com -> com.getId().equals(id)));
+            company.getLikedUsers().forEach(user -> user.getFavoriteCompanies().removeIf(com -> com.getId().equals(id)));
+            companyRepository.save(company);
+            companyRepository.delete(company);
+        }
     }
 }

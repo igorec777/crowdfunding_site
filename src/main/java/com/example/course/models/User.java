@@ -54,6 +54,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "company_id"))
     private Set<Company> favoriteCompanies;
 
+    @ManyToMany
+    @JoinTable(name = "user_backed_company", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "company_id"))
+    private Set<Company> backedCompanies;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Comment> comments;
 

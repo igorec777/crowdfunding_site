@@ -72,8 +72,13 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
-        userRepository.flush();
+        if (userRepository.findById(id).isPresent()) {
+            User user = userRepository.findById(id).get();
+            user.getFavoriteCompanies().clear();
+            user.getBackedCompanies().clear();
+            userRepository.save(user);
+            userRepository.delete(user);
+        }
     }
 
     public void blockById(Long id) {

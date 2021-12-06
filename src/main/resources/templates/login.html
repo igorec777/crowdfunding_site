@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title lang="en">Login</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-        <link rel="stylesheet" th:href="@{/css/main.css}">
-    </head>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title lang="en">Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
 
-    <body>
-        <header th:insert="header :: nav"></header>
+<body>
+<header th:insert="header :: nav"></header>
 
-        <div class="container">
-            <h1>Log in to account</h1>
+<div class="container">
+    <h1>Log in to account</h1>
 
-            <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                Can't login
+    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+        Can't login
+    </div>
+
+    <div th:if="${!isPasswordChanged.equals('')}" class="alert alert-success" role="alert">
+        Password has been changed
+    </div>
+
+    <form th:action="@{/login}"  method="post">
+        <div class="form-group row">
+            <label for="inputLogin" class="col-sm-2 col-form-label">Login</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="inputLogin" name="username" required>
             </div>
-
-            <div th:if="${!isPasswordChanged.equals('')}" class="alert alert-success" role="alert">
-                Password has been changed
-            </div>
-
-            <form th:action="@{/login}"  method="post">
-                <div class="form-group row">
-                    <label for="inputLogin" class="col-sm-2 col-form-label">Login</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputLogin" name="username" required>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="inputPassword" name="password" required>
-                    </div>
-                </div>
-                <a href="/resetPassword">Forgot password?</a>
-                <div class="form-group row mt-3">
-                    <div class="col-sm-10">
-                        <button type="submit" class="btn btn-success" value="Login">Log in</button>
-                    </div>
-                </div>
-            </form>
         </div>
-    </body>
+        <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control" id="inputPassword" name="password" required>
+            </div>
+        </div>
+        <a href="/resetPassword">Forgot password?</a>
+        <div class="form-group row mt-3">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-success" value="Login">Log in</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
 </html>
