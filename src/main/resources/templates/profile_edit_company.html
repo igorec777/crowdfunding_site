@@ -54,7 +54,7 @@
           <label for="id_tags" class="col-md-2 control-label">Tags</label>
           <div class="col-md-10">
             <input type="text" th:field="*{tags}" th:value="${company.tags}"
-                   name="tags" class="form-control" placeholder="Tags" required="" id="id_tags">
+                   name="tags" class="form-control" placeholder="Tags" id="id_tags">
           </div>
         </div>
 
@@ -77,6 +77,8 @@
           <label for="id_goal" class="col-md-2 control-label">Company goal (US$)</label>
           <div class="col-md-10">
             <input type="number" min="0.01" th:field="*{companyGoal}" th:value="${company.companyGoal}"
+                   oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                   maxlength = "7"
                    name="companyGoal" class="form-control" placeholder="goal" step="0.01" required="" id="id_goal">
           </div>
         </div>
