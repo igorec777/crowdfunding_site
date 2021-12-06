@@ -29,7 +29,7 @@ public class EmailSenderService {
         SecureToken secureToken = secureTokenService.createSecureToken();
 
         sendEmail(user.getEmail(), "Verify email",
-                String.format("Hello, %s! Go to http://localhost:8081/verify/?token=%s to verify your email",
+                String.format("Hello, %s! Go to https://crowdfunding-platform1.herokuapp.com/verify/?token=%s to verify your email",
                 user.getUsername(), secureToken.getToken()), gmailSender);
 
         SecureToken oldToken = secureTokenService.findByUserId(user.getId());
@@ -45,7 +45,7 @@ public class EmailSenderService {
         PasswordResetToken passwordResetToken = passwordResetTokenService.create();
 
         sendEmail(email, "Reset password",
-                String.format("Go to http://localhost:8081/changePassword/?token=%s to reset your password",
+                String.format("Go to https://crowdfunding-platform1.herokuapp.com/changePassword/?token=%s to reset your password",
                         passwordResetToken.getToken()), gmailSender);
 
         User user = userService.findByEmail(email);

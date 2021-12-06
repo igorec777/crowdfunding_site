@@ -64,25 +64,16 @@ public class HomeController {
         if (principal != null) {
             User user = userService.findByUsername(principal.getName());
             model.addAttribute("favouriteCompanies", user.getFavoriteCompanies());
-            List<News> newsList = user.getFavoriteCompanies().stream()
-                    .flatMap(com -> com.getNews().stream())
-                    .collect(Collectors.toList());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-            Comparator<News> dateComp = (news2, news1) -> LocalDateTime.parse(news1.getDate(), formatter)
-                        .isAfter(LocalDateTime.parse(news2.getDate(), formatter)) ? 1 :
-                    LocalDateTime.parse(news1.getDate(), formatter)
-                        .isBefore(LocalDateTime.parse(news2.getDate(), formatter)) ? -1 : 0;
-            newsList.sort(dateComp);
-            model.addAttribute("newsList", newsList);
+            model.addAttribute("newsList", newsService.getSortedNews(user));
         }
-        companyService.calculateAverageForCompanies(companies);
         model.addAttribute("companies", companies);
+        companyService.calculateAverageForCompanies(companies);
         return "companies";
     }
 
     @GetMapping("/companies/search")
     public String searchCompanies(@RequestParam(value = "searchText", required = false) String searchText,
-                                  Model model) throws InterruptedException {
+                                  Model model, Principal principal) throws InterruptedException {
         List<Company> companies;
         if (searchText.equals(""))
             companies = companyService.findAll();
@@ -91,6 +82,12 @@ public class HomeController {
             indexingService.initiateIndexing();
             companies = searchService.getCompanyBasedOnWord(searchText);
         }
+        if (principal != null) {
+            User user = userService.findByUsername(principal.getName());
+            model.addAttribute("favouriteCompanies", user.getFavoriteCompanies());
+            model.addAttribute("newsList", newsService.getSortedNews(user));
+        }
+        companyService.calculateAverageForCompanies(companies);
         model.addAttribute("companies", companies);
         return "companies";
     }
@@ -98,7 +95,6 @@ public class HomeController {
     @GetMapping("/companies/detail")
     public String companyDetail(@ModelAttribute("companyId") Long companyId,
                                 Model model, Principal principal) {
-        float averageRating = 0;
         float userRateValue = 0;
         boolean isOwner = false;
         boolean isFavourite = false;
