@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <div class="col-4">
+                <div th:if="@{isNeedNews}" class="col-4">
                     <h6>Hot news 🔥</h6>
                     <div class="mt-3" th:each="news, newsStat : ${newsList}" th:unless="${newsStat.index > 9}">
                         <div class="card">
