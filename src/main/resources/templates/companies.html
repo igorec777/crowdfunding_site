@@ -54,7 +54,7 @@
                     <div class="card-body">
                         <h2 class="card-title">
                             <a th:href="@{/companies/detail(companyId=${company.id})}" th:text="${company.name}"></a>
-                            <span th:if="${favouriteCompanies != null and favouriteCompanies.contains(company)}" style="color: #FFD700;">★</span>
+                            <span th:if="${favouriteCompanies != null and favouriteCompanies.contains(company)}" style="color: red;">♥</span>
                         </h2>
                         <h6 class="card-subtitle text-muted">★[[${company.totalRate}]]</h6>
                         <p class="card-text" th:text="${company.description}"></p>

@@ -22,10 +22,10 @@
             <h1>
                 [[${company.name}]]
                 <span th:if="${isFavourite}">
-                    <a title="Remove from favorites" class="favorite_yes" th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">★</a>
+                    <a title="Remove from favorites" class="favorite_yes" th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">♥</a>
                 </span>
                 <span th:if="${!isFavourite}">
-                        <a title="Add to favorites" class="favorite_no" th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">★</a>
+                        <a title="Add to favorites" class="favorite_no" th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">♥</a>
                 </span>
             </h1>
 
