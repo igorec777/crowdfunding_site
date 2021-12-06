@@ -117,6 +117,7 @@ public class ProfileController {
         companyService.calculateAverageForCompanies(companies);
         model.addAttribute("companies", companies);
         model.addAttribute("favouriteCompanies", user.getFavoriteCompanies());
+        model.addAttribute("isNeedNews", false);
         return "companies";
     }
 
