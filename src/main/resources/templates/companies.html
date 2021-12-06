@@ -14,7 +14,7 @@
     <body>
         <header th:insert="header :: nav"></header>
 
-        <ul class="scroll bg-light d-flex justify-content-center">
+        <ul class="scroll d-flex justify-content-center">
             <li class="nav-item"><a class="nav-link" th:href="@{/companies(topic='Art')}">Art</a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/companies(topic='Comics')}">Comics</a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/companies(topic='Crafts')}">Crafts</a></li>
@@ -54,7 +54,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h2 class="card-title">
-                                    <a th:href="@{/companies/detail(companyId=${company.id})}" th:text="${company.name}"></a>
+                                    <a th:href="@{/companies/detail(companyId=${company.id})}" th:text="${company.name}" class="card-link"></a>
                                     <span th:if="${favouriteCompanies != null and favouriteCompanies.contains(company)}" style="color: red;">♥</span>
                                 </h2>
                                 <h6 class="card-subtitle text-muted">★[[${company.averageRate}]]</h6>
