@@ -61,6 +61,7 @@ public class HomeController {
             User user = userService.findByUsername(principal.getName());
             model.addAttribute("favouriteCompanies", user.getFavoriteCompanies());
         }
+        companyService.calculateAverageForCompanies(companies);
         model.addAttribute("companies", companies);
         return "companies";
     }
@@ -100,14 +101,9 @@ public class HomeController {
                 userRateValue = raitingService.findByCompanyIdAndUserId(companyId, user.getId()).getValue();
             }
         }
-
-        if (company.getRateCount() > 0) {
-            averageRating = round((float) company.getTotalRate() / company.getRateCount(), 2);
-        }
-
-        model.addAttribute("backers", companyService.getBackersCount(company));
+        model.addAttribute("backersCount", company.getBackers().size());
         model.addAttribute("userRateValue", userRateValue);
-        model.addAttribute("averageRating", averageRating);
+        model.addAttribute("averageRating", companyService.getAverageRatingByCompany(company));
         model.addAttribute("newComment", new Comment());
         model.addAttribute("newNews", new News());
         model.addAttribute("isOwner", isOwner);
@@ -148,11 +144,8 @@ public class HomeController {
 
         if (!raitingService.isExistByCompanyIdAndUserId(companyId, currUser.getId())) {
             raiting = new Raiting(Integer.parseInt(rateValue), company, currUser);
-            company.setTotalRate(company.getTotalRate() + Integer.parseInt(rateValue));
-            company.setRateCount(company.getRateCount() + 1);
         } else {
             raiting = raitingService.findByCompanyIdAndUserId(companyId, currUser.getId());
-            company.setTotalRate(company.getTotalRate() - raiting.getValue() + Integer.parseInt(rateValue));
             raiting.setValue(Integer.parseInt(rateValue));
         }
 
@@ -210,18 +203,24 @@ public class HomeController {
             return "redirect:/companies/detail/support";
         }
         float sum = company.getCurrentSum() + Float.parseFloat(donateSum);
-
         company.setCurrentSum(round(sum, 2));
         companyService.save(company);
+
+        User user = userService.findByUsername(principal.getName());
+        user.getBackedCompanies().add(company);
+        userService.save(user);
 
         return "redirect:/companies/detail";
     }
 
 
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("companies/detail/support/buy")
     public String buyBonus(@ModelAttribute("companyId") Long companyId, @ModelAttribute("bonusId") Long bonusId,
                            RedirectAttributes rattrs, Principal principal) {
+        if (!userService.hasAuthority(userService.findByUsername(principal.getName()), "USER")) {
+            return "redirect:/verify";
+        }
         Company company = companyService.findById(companyId);
         Bonus bonus = bonusService.findById(bonusId);
         User user = userService.findByUsername(principal.getName());
@@ -231,6 +230,9 @@ public class HomeController {
 
             company.setCurrentSum(sum);
             companyService.save(company);
+
+            user.getBackedCompanies().add(company);
+            userService.save(user);
             Set<User> users = bonus.getUsers();
             users.add(userService.findByUsername(principal.getName()));
             bonus.setUsers(users);

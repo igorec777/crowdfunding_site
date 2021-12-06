@@ -42,7 +42,7 @@ public class AuthController {
     public String loginForm(@ModelAttribute("isPasswordChanged") String isPasswordChanged,
                             Principal principal) {
         if (principal != null) {
-            return "companies";
+            return "redirect:/companies";
         }
         return "login";
     }
@@ -51,7 +51,7 @@ public class AuthController {
     public String registerForm(@ModelAttribute("duplicateField") String duplicateField,
                                Principal principal) {
         if (principal != null) {
-            return "companies";
+            return "redirect:/companies";
         }
         return "register";
     }
@@ -60,7 +60,7 @@ public class AuthController {
     public String processRegistration(User user, RedirectAttributes rattrs,
                                       Principal principal) {
         if (principal != null) {
-            return "companies";
+            return "redirect:/companies";
         }
         if (userService.isExistByUsername(user.getUsername())) {
             rattrs.addFlashAttribute("duplicateField", "login");
@@ -107,7 +107,7 @@ public class AuthController {
                                     @ModelAttribute("isNotVerified") String isNotVerified,
                                     Principal principal) {
         if (principal != null) {
-            return "/companies";
+            return "redirect:/companies";
         }
         return "forget_password";
     }

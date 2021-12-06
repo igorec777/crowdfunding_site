@@ -28,28 +28,12 @@ h1
     height: 100%;
 }
 
-.btn-logout {
- display: block;
- background-color: #3b3455;
- vertical-align: middle;
- text-decoration: none;
- text-align: center;
- padding-top: 10px;
- margin-left: 45%;
- margin-top: 20%;
- width: 155px;
- height: 45px;
- border: 0;
- border-radius: 5px;
- color: white;
-}
-
 .favorite_no {
     color: #ddd;
 }
 
 .favorite_yes {
-    color: #FFD700;
+    color: red;
 }
 
 .favorite_yes:hover {
@@ -58,7 +42,7 @@ h1
 }
 
 .favorite_no:hover {
-    color: #FFD700;
+    color: red;
     text-decoration: none;
 }
 
