@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -68,10 +67,12 @@ public class HomeController {
             List<News> newsList = user.getFavoriteCompanies().stream()
                     .flatMap(com -> com.getNews().stream())
                     .collect(Collectors.toList());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
-            newsList.sort((news1, news2) ->
-                    LocalDate.parse(news1.getDate(), formatter)
-                            .isBefore(LocalDate.parse(news2.getDate(), formatter)) ? 1 : 0);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+            Comparator<News> dateComp = (news2, news1) -> LocalDateTime.parse(news1.getDate(), formatter)
+                        .isAfter(LocalDateTime.parse(news2.getDate(), formatter)) ? 1 :
+                    LocalDateTime.parse(news1.getDate(), formatter)
+                        .isBefore(LocalDateTime.parse(news2.getDate(), formatter)) ? -1 : 0;
+            newsList.sort(dateComp);
             model.addAttribute("newsList", newsList);
         }
         companyService.calculateAverageForCompanies(companies);
