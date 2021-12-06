@@ -43,3 +43,22 @@ h1
  border-radius: 5px;
  color: white;
 }
+
+.favorite_no {
+    color: #ddd;
+}
+
+.favorite_yes {
+    color: #FFD700;
+}
+
+.favorite_yes:hover {
+    color: #ddd;
+    text-decoration: none;
+}
+
+.favorite_no:hover {
+    color: #FFD700;
+    text-decoration: none;
+}
+

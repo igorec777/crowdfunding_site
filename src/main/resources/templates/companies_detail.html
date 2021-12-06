@@ -19,17 +19,18 @@
         <header th:insert="header :: nav"></header>
 
         <div class="container">
-            <h1 th:text="${company.name}"></h1>
+            <h1>
+                [[${company.name}]]
+                <span th:if="${isFavourite}">
+                    <a title="Remove from favorites" class="favorite_yes" th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">★</a>
+                </span>
+                <span th:if="${!isFavourite}">
+                        <a title="Add to favorites" class="favorite_no" th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">★</a>
+                </span>
+            </h1>
 
             <div class="row">
                 <div class="col-md-8">
-                    <span th:if="${isFavourite}">
-                        <a th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">Remove from favourites</a>
-                    </span>
-                    <span th:if="${!isFavourite}">
-                        <a th:href="@{/companies/detail/addFavourite(companyId=${company.id})}">Add to favourite</a>
-                    </span>
-
                     <h2 th:text="${company.topic}"></h2>
                     <h4 th:text="${company.tags}"></h4>
                     <div th:if="${company.youtubeURL != ''}" class="video-wrap">
@@ -47,10 +48,10 @@
                         </div>
                     </div>
 
-                    <h3>US$ <span th:text="${company.currentSum}"></span></h3>
+                    <h3 style="color: green;">US$ <span th:text="${company.currentSum}"></span></h3>
                     <p>pledged of US$ <span th:text="${company.companyGoal}"></span> goal</p>
-                    <p> <span th:text="${backers}"></span> backers</p>
-                    <h3>Expiration date: <span th:text="${company.expirationDate}"></span></h3>
+                    <h4> <span th:text="${backers}"></span> backers</h4>
+                    <h4>Expiration date: <span th:text="${company.expirationDate}"></span></h4>
                     <a class="btn btn-success" th:href="@{/companies/detail/support(companyId=${company.id})}">Support company</a>
 
                     <form th:action="@{/companies/detail/addRaiting(companyId=${companyId})}" method="post">
